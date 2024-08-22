@@ -1,6 +1,5 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
 import '../login/login_page.dart';
 
@@ -41,10 +40,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
         opacity: _opacity,
         duration: const Duration(seconds: 2),
         child: Center(
-          child: Image.asset(
-            'assets/images/the_next_star_logo.png',
+          child: SizedBox(
             width: 150,
             height: 150,
+            child: Image.asset(
+              'assets/images/the_next_star_pink_logo.png',
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../individuals/individual_popup.dart';
+import '../companies/company_popup.dart';
 import '../registration/registration_selection_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -8,6 +10,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool isIndividualSelected = true;
+  final Color tnsMainPink = const Color(0xFFEF69A6);
 
   @override
   Widget build(BuildContext context) {
@@ -19,33 +22,53 @@ class _LoginPageState extends State<LoginPage> {
         child: Stack(
           children: [
             Positioned(
-              left: 151,
-              top: 180,
-              child: Container(
-                width: 84,
-                height: 84,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/images/the_next_star_logo.png',
-                    ),
-                    fit: BoxFit.cover,
-                  ),
+              left: 155,
+              top: 152,
+              child: SizedBox(
+                width: 80,
+                height: 85,
+                child: Image.asset(
+                  'assets/images/the_next_star_pink_logo.png',
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
             Positioned(
               left: 20,
+              right: 20,
               top: 351,
               child: _buildInputField('아이디를 입력하세요.', false),
             ),
             Positioned(
               left: 20,
+              right: 20,
               top: 411,
               child: _buildInputField('비밀번호를 입력하세요.', true),
             ),
             Positioned(
-              left: 79,
+              left: 26,
+              right: 26,
+              top: 317,
+              child: Stack(
+                children: [
+                  Container(
+                    height: 4,
+                    decoration: const BoxDecoration(color: Color(0xFFCBCBCB)),
+                  ),
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    left: isIndividualSelected ? 0 : 169,
+                    child: Container(
+                      width: 170,
+                      height: 4,
+                      decoration: BoxDecoration(color: tnsMainPink),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              left: 80,
               top: 283,
               child: GestureDetector(
                 onTap: () {
@@ -58,14 +81,13 @@ class _LoginPageState extends State<LoginPage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: isIndividualSelected
-                        ? const Color(0xFF414141)
-                        : const Color(0xFFD9D9D9),
+                        ? tnsMainPink
+                        : const Color(0xFFCBCBCB),
                     fontSize: 18,
                     fontFamily: 'Pretendard',
                     fontWeight: isIndividualSelected
                         ? FontWeight.w700
                         : FontWeight.w400,
-                    height: 1.5,
                   ),
                 ),
               ),
@@ -84,43 +106,84 @@ class _LoginPageState extends State<LoginPage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: isIndividualSelected
-                        ? const Color(0xFFD9D9D9)
-                        : const Color(0xFF414141),
+                        ? const Color(0xFFCBCBCB)
+                        : tnsMainPink,
                     fontSize: 18,
                     fontFamily: 'Pretendard',
                     fontWeight: isIndividualSelected
                         ? FontWeight.w400
                         : FontWeight.w700,
-                    height: 1.5,
                   ),
                 ),
               ),
             ),
             Positioned(
               left: 20,
+              right: 20,
               top: 476,
-              child: _buildLoginButton(),
+              child: GestureDetector(
+                onTap: () {
+                  if (isIndividualSelected) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => IndividualPopupPage()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CompanyPopupPage()),
+                    );
+                  }
+                },
+                child: Container(
+                  height: 44,
+                  decoration: ShapeDecoration(
+                    color: tnsMainPink,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      '로그인하기',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
             Positioned(
-              left: 67,
+              left: 20, // left와 right를 적절히 설정하여 너비를 조절합니다.
+              right: 20,
               top: 544,
               child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildTextButton('아이디찾기'),
-                  const SizedBox(width: 25),
-                  _buildTextButton('비밀번호찾기'),
-                  const SizedBox(width: 25),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RegistrationSelectionPage()),
-                      );
-                    },
-                    child: _buildTextButton('회원가입하기'),
+                  Flexible(
+                    child: _buildTextButton('아이디찾기'),
+                  ),
+                  Flexible(
+                    child: _buildTextButton('비밀번호찾기'),
+                  ),
+                  Flexible(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegistrationSelectionPage(),
+                          ),
+                        );
+                      },
+                      child: _buildTextButton('회원가입하기'),
+                    ),
                   ),
                 ],
               ),
@@ -133,40 +196,27 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildInputField(String hintText, bool isPassword) {
     return Container(
-      width: 350,
+      width: double.infinity,
       height: 45,
       decoration: ShapeDecoration(
-        color: const Color(0xFFF4F4F5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+          borderRadius: BorderRadius.circular(6),
+        ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
       child: TextField(
         obscureText: isPassword,
         decoration: InputDecoration(
           hintText: hintText,
-          border: InputBorder.none,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoginButton() {
-    return Container(
-      width: 350,
-      height: 44,
-      decoration: ShapeDecoration(
-        color: const Color(0xFF878787),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      ),
-      child: const Center(
-        child: Text(
-          '로그인하기',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
+          hintStyle: const TextStyle(
+            color: Color(0xFFCBCBCB),
+            fontSize: 14,
             fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w400,
           ),
+          border: InputBorder.none,
         ),
       ),
     );
@@ -176,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
     return Text(
       text,
       style: const TextStyle(
-        color: Color(0xFF434343),
+        color: Color(0xFF878787),
         fontSize: 14,
         fontFamily: 'Pretendard',
         fontWeight: FontWeight.w500,
