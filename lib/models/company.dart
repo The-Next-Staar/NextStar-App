@@ -1,5 +1,5 @@
 class Company {
-  final String name;
+  final String company;
   final String description;
   final bool isRecruiting;
   final int daysLeft;
@@ -13,7 +13,7 @@ class Company {
   bool isFavorite = false;
 
   Company({
-    required this.name,
+    required this.company,
     required this.description,
     required this.isRecruiting,
     required this.daysLeft,
@@ -33,15 +33,20 @@ class Company {
 class Audition {
   final String title;
   final String deadline;
+  final Company company;
   bool isFavorite;
 
-  Audition(
-      {required this.title, required this.deadline, this.isFavorite = false});
+  Audition({
+    required this.title,
+    required this.deadline,
+    required this.company,
+    this.isFavorite = false,
+  });
 }
 
-final List<Company> sampleCompanies = [
+List<Company> sampleCompanies = [
   Company(
-    name: 'JYP Entertainment',
+    company: 'JYP Entertainment',
     description: '차세대 스타를 찾고 있습니다.\n지금 그 주인공이 되어보세요.',
     isRecruiting: true,
     daysLeft: 1,
@@ -50,10 +55,7 @@ final List<Company> sampleCompanies = [
     detailedDescription:
         'JYP엔터테인먼트는 K-POP을 선도하는 글로벌 엔터테인먼트 기업입니다. 우리는 음악, 공연, 영상 등 다양한 분야에서 혁신적인 콘텐츠를 제작하고 있습니다.',
     requirements: ['댄스', '보컬', '랩', '작곡'],
-    currentAuditions: [
-      Audition(title: '24년 상반기 오디션 (여자)', deadline: '24.08.20'),
-      Audition(title: '24년 상반기 오디션 (남자)', deadline: '24.08.20'),
-    ],
+    currentAuditions: [],
     requirementDetails: {
       '댄스': '다양한 장르의 댄스를 소화할 수 있는 능력을 요구합니다.',
       '보컬': '넓은 음역대와 풍부한 감정을 전달할 수 있는 보컬 역량을 중시합니다.',
@@ -63,7 +65,7 @@ final List<Company> sampleCompanies = [
     imagePath: 'assets/images/details/jyp_entertainment.png',
   ),
   Company(
-    name: 'SM Entertainment',
+    company: 'SM Entertainment',
     description: '글로벌 스타의 꿈을 실현하세요.',
     isRecruiting: true,
     daysLeft: 5,
@@ -72,9 +74,7 @@ final List<Company> sampleCompanies = [
     detailedDescription:
         'SM엔터테인먼트는 한국을 대표하는 종합 엔터테인먼트 기업입니다. 우리는 음악 제작부터 아티스트 매니지먼트, 콘서트 기획까지 다양한 사업을 영위하고 있습니다.',
     requirements: ['보컬', '댄스', '외국어 능력'],
-    currentAuditions: [
-      Audition(title: '24년 하반기 오디션 (여자)', deadline: '24.12.20'),
-    ],
+    currentAuditions: [],
     requirementDetails: {
       '보컬': '강력한 발성과 고유의 음색을 가진 보컬리스트를 선호합니다.',
       '댄스': '독창적이고 에너지 넘치는 퍼포먼스를 보여줄 수 있어야 합니다.',
@@ -83,7 +83,7 @@ final List<Company> sampleCompanies = [
     imagePath: 'assets/images/details/sm_entertainment.png',
   ),
   Company(
-    name: 'YG Entertainment',
+    company: 'YG Entertainment',
     description: '새로운 도전을 기다리고 있습니다.',
     isRecruiting: true,
     daysLeft: 10,
@@ -91,9 +91,7 @@ final List<Company> sampleCompanies = [
     location: '서울 마포구',
     detailedDescription: 'YG엔터테인먼트는 혁신적인 음악과 스타일을 선도하는 엔터테인먼트 기업입니다.',
     requirements: ['작사', '프로듀싱'],
-    currentAuditions: [
-      Audition(title: '24년 프로듀서 오디션', deadline: '24.09.10'),
-    ],
+    currentAuditions: [],
     requirementDetails: {
       '작사': '창의적인 가사 작성 능력을 중시합니다.',
       '프로듀싱': '독창적인 음악을 제작할 수 있는 프로듀싱 역량을 기대합니다.',
@@ -101,7 +99,7 @@ final List<Company> sampleCompanies = [
     imagePath: 'assets/images/details/yg_entertainment.png',
   ),
   Company(
-    name: 'HYBE Entertainment',
+    company: 'HYBE Entertainment',
     description: '글로벌 무대에 도전하세요.',
     isRecruiting: true,
     daysLeft: 14,
@@ -109,9 +107,7 @@ final List<Company> sampleCompanies = [
     location: '서울 용산구',
     detailedDescription: 'HYBE 엔터테인먼트는 글로벌 시장을 타겟으로 하는 차세대 아티스트를 발굴합니다.',
     requirements: ['보컬', '댄스', '랩'],
-    currentAuditions: [
-      Audition(title: '24년 글로벌 오디션', deadline: '24.09.15'),
-    ],
+    currentAuditions: [],
     requirementDetails: {
       '보컬': '풍부한 감성과 파워풀한 보컬을 중시합니다.',
       '댄스': '에너지 넘치는 퍼포먼스가 필요합니다.',
@@ -120,7 +116,7 @@ final List<Company> sampleCompanies = [
     imagePath: 'assets/images/details/hybe_entertainment.png',
   ),
   Company(
-    name: 'FNC Entertainment',
+    company: 'FNC Entertainment',
     description: '함께 성장할 인재를 찾고 있습니다.',
     isRecruiting: false,
     daysLeft: 0,
@@ -137,7 +133,7 @@ final List<Company> sampleCompanies = [
     imagePath: 'assets/images/details/fnc_entertainment.png',
   ),
   Company(
-    name: 'Pledis Entertainment',
+    company: 'Pledis Entertainment',
     description: '미래를 함께 할 아티스트를 모집합니다.',
     isRecruiting: false,
     daysLeft: 0,
@@ -153,3 +149,41 @@ final List<Company> sampleCompanies = [
     imagePath: 'assets/images/details/pledis_entertainment.png',
   ),
 ];
+
+void initializeAuditions() {
+  sampleCompanies[0].currentAuditions.addAll([
+    Audition(
+        title: '24년 상반기 오디션 (여자)',
+        deadline: '24.08.20',
+        company: sampleCompanies[0]),
+    Audition(
+        title: '24년 상반기 오디션 (남자)',
+        deadline: '24.08.20',
+        company: sampleCompanies[0]),
+  ]);
+
+  sampleCompanies[1].currentAuditions.add(
+        Audition(
+            title: '24년 하반기 오디션 (여자)',
+            deadline: '24.12.20',
+            company: sampleCompanies[1]),
+      );
+
+  sampleCompanies[2].currentAuditions.add(
+        Audition(
+            title: '24년 프로듀서 오디션',
+            deadline: '24.09.10',
+            company: sampleCompanies[2]),
+      );
+
+  sampleCompanies[3].currentAuditions.add(
+        Audition(
+            title: '24년 글로벌 오디션',
+            deadline: '24.09.15',
+            company: sampleCompanies[3]),
+      );
+}
+
+void initializeCompanyData() {
+  initializeAuditions();
+}

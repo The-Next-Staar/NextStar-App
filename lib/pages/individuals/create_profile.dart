@@ -17,8 +17,11 @@ class ProfileCreatePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildProfileImage(),
+                      const SizedBox(height: 20),
                       _buildNameField(),
+                      const SizedBox(height: 20),
                       _buildAgeField(),
+                      const SizedBox(height: 20),
                       _buildSpecsField(),
                       _buildSubmitButton(context),
                     ],
@@ -39,13 +42,13 @@ class ProfileCreatePage extends StatelessWidget {
         children: [
           Image.asset(
             'assets/images/the_next_star_logo_line.png',
-            width: 230,
+            width: 200,
             height: 60,
             fit: BoxFit.contain,
           ),
           const SizedBox(height: 10),
           const Text(
-            '내 프로필 관리',
+            '내 프로필 만들기',
             style: TextStyle(
               color: Color(0xFF434343),
               fontSize: 18,

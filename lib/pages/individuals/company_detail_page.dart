@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../models/casting.dart';
 import '../../models/company.dart';
+import 'apply/apply_page_1.dart';
 
 class CompanyDetailPage extends StatefulWidget {
   final Company company;
@@ -19,6 +21,7 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
     ));
+    initializeAuditions();
   }
 
   @override
@@ -26,7 +29,7 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
     return Scaffold(
       body: Column(
         children: [
-          _buildCustomAppBar(),
+          _buildAppBar(),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -37,6 +40,7 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
                   _buildDetailedDescription(),
                   _buildRequirements(),
                   _buildCurrentAuditions(),
+                  _buildCompanyCastings(),
                 ],
               ),
             ),
@@ -46,7 +50,7 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
     );
   }
 
-  Widget _buildCustomAppBar() {
+  Widget _buildAppBar() {
     return Container(
       width: double.infinity,
       height: 80,
@@ -106,7 +110,7 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
           bottom: 20,
           left: 20,
           child: Text(
-            widget.company.name,
+            widget.company.company,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -244,7 +248,7 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
 
   Widget _buildAuditionCard(Audition audition) {
     return Container(
-      width: 165,
+      width: 155,
       height: 136,
       margin: const EdgeInsets.only(right: 10),
       decoration: ShapeDecoration(
@@ -308,24 +312,34 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
             ),
           ),
           const Spacer(),
-          Container(
-            width: double.infinity,
-            height: 36,
-            decoration: const BoxDecoration(
-              color: Color(0xFFEF69A6),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ApplyPage1(audition: audition),
+                ),
+              );
+            },
+            child: Container(
+              width: double.infinity,
+              height: 36,
+              decoration: const BoxDecoration(
+                color: Color(0xFFEF69A6),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                ),
               ),
-            ),
-            alignment: Alignment.center,
-            child: const Text(
-              '지원하기',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w600,
+              alignment: Alignment.center,
+              child: const Text(
+                '지원하기',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -344,6 +358,58 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
       child: Text(
         label,
         style: TextStyle(color: textColor, fontSize: 12),
+      ),
+    );
+  }
+
+  Widget _buildCompanyCastings() {
+    List<Casting> companyCastings = sampleCastings
+        .where((casting) => casting.company == widget.company)
+        .toList();
+
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('현재 진행 중인 캐스팅',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          if (companyCastings.isEmpty)
+            const Text('현재 진행 중인 캐스팅이 없습니다.',
+                style: TextStyle(fontSize: 16, color: Colors.grey))
+          else
+            Column(
+              children: companyCastings
+                  .map((casting) => _buildCastingCard(casting))
+                  .toList(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCastingCard(Casting casting) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(casting.message,
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 5),
+          Text('마감일: ${casting.deadline}',
+              style: const TextStyle(fontSize: 14, color: Colors.grey)),
+          const SizedBox(height: 5),
+          Text('담당자: ${casting.contactPerson}',
+              style: const TextStyle(fontSize: 14)),
+        ],
       ),
     );
   }

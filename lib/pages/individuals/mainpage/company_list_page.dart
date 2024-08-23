@@ -119,7 +119,7 @@ class _CompanyListPageState extends State<CompanyListPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                company.name,
+                company.company,
                 style: const TextStyle(
                   color: Color(0xFF434343),
                   fontSize: 18,
@@ -162,15 +162,15 @@ class _CompanyListPageState extends State<CompanyListPage> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          if (favorites.contains(company.name)) {
-            favorites.remove(company.name);
+          if (favorites.contains(company.company)) {
+            favorites.remove(company.company);
           } else {
-            favorites.add(company.name);
+            favorites.add(company.company);
           }
         });
       },
       child: Icon(
-        favorites.contains(company.name) ? Icons.star : Icons.star_border,
+        favorites.contains(company.company) ? Icons.star : Icons.star_border,
         color: const Color(0xFF878787),
       ),
     );

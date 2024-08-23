@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../models/casting.dart';
+import '../../../models/company.dart';
+import '../proposal_page.dart';
 
 class ApplicationManagementPage extends StatefulWidget {
   const ApplicationManagementPage({super.key});
@@ -105,14 +108,26 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
       padding: EdgeInsets.zero,
       children: [
         _buildSectionTitle('최근 제안'),
-        _buildCastingCompanyCard(
-            'JYP', '안녕하세요, JYP 캐스팅 센터입니다.', '2024.08.18', '마감 D-7'),
-        _buildCastingCompanyCard(
-            'SM', '안녕하세요! SM 캐스팅 센터입니다.', '2024.08.18', '기한 없음'),
+        ...sampleCastings
+            .where((casting) => casting.status == CastingStatus.pending)
+            .map((casting) => _buildCastingCompanyCard(
+                  casting.company.company,
+                  casting.message,
+                  casting.date,
+                  '마감 ${casting.deadline}',
+                  casting,
+                )),
         const SizedBox(height: 20),
         _buildSectionTitle('내가 이미 확인한 제안'),
-        _buildCastingCompanyCard(
-            'YG', '안녕하세요, YG 캐스팅 센터입니다.', '2024.08.15', '거절'),
+        ...sampleCastings
+            .where((casting) => casting.status != CastingStatus.pending)
+            .map((casting) => _buildCastingCompanyCard(
+                  casting.company.company,
+                  casting.message,
+                  casting.date,
+                  casting.status == CastingStatus.approved ? '승인' : '거절',
+                  casting,
+                )),
       ],
     );
   }
@@ -180,7 +195,12 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
   }
 
   Widget _buildCastingCompanyCard(
-      String title, String description, String date, String status) {
+    String title,
+    String description,
+    String date,
+    String status,
+    Casting casting,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       padding: const EdgeInsets.all(20),
@@ -224,8 +244,18 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
               Text(date,
                   style:
                       const TextStyle(fontSize: 13, color: Color(0xFF434343))),
-              const Text('제안 내용 보기',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF878787))),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProposalPage(casting: casting),
+                    ),
+                  );
+                },
+                child: const Text('제안 내용 보기',
+                    style: TextStyle(fontSize: 13, color: Color(0xFF878787))),
+              ),
             ],
           ),
         ],

@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Positioned(
-              left: 20, // left와 right를 적절히 설정하여 너비를 조절합니다.
+              left: 20,
               right: 20,
               top: 544,
               child: Row(
