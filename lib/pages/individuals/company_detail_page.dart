@@ -1,52 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../models/company.dart';
 
-class CompanyDetailPage extends StatelessWidget {
+class CompanyDetailPage extends StatefulWidget {
   final Company company;
 
   CompanyDetailPage({required this.company});
 
   @override
+  _CompanyDetailPageState createState() => _CompanyDetailPageState();
+}
+
+class _CompanyDetailPageState extends State<CompanyDetailPage> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context),
-              _buildCompanyInfo(),
-              _buildDetailedDescription(),
-              _buildRequirements(),
-              _buildCurrentAuditions(),
-            ],
+      body: Column(
+        children: [
+          _buildCustomAppBar(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  _buildCompanyInfo(),
+                  _buildDetailedDescription(),
+                  _buildRequirements(),
+                  _buildCurrentAuditions(),
+                ],
+              ),
+            ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomAppBar() {
+    return Container(
+      width: double.infinity,
+      height: 80,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0, 2),
+            blurRadius: 4,
+          ),
+        ],
+      ),
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () => Navigator.pop(context),
+            ),
+            Image.asset(
+              'assets/images/the_next_star_logo_line.png',
+              width: 140,
+              height: 15.07,
+              fit: BoxFit.contain,
+            ),
+            IconButton(
+              icon: Icon(
+                widget.company.isFavorite ? Icons.star : Icons.star_border,
+                color: widget.company.isFavorite ? Colors.yellow : Colors.black,
+              ),
+              onPressed: () {
+                setState(() {
+                  widget.company.isFavorite = !widget.company.isFavorite;
+                });
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Stack(
       children: [
-        Container(
-          height: 200,
+        Image.asset(
+          widget.company.imagePath,
           width: double.infinity,
-          color: Colors.grey[300],
-        ),
-        Positioned(
-          top: 20,
-          left: 20,
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
+          height: 200,
+          fit: BoxFit.cover,
         ),
         Positioned(
           bottom: 20,
           left: 20,
           child: Text(
-            company.name,
+            widget.company.name,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -65,18 +125,18 @@ class CompanyDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${company.industry} · ${company.location}',
+            '${widget.company.industry} · ${widget.company.location}',
             style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 10),
           Row(
             children: [
-              if (company.isRecruiting)
+              if (widget.company.isRecruiting)
                 _buildTag('현재 모집 중', const Color(0xFFFF7BB7), Colors.white),
-              if (company.isRecruiting) const SizedBox(width: 10),
-              if (company.daysLeft > 0)
-                _buildTag('${company.daysLeft}일 남음', const Color(0xFFFFF2F8),
-                    const Color(0xFFA139B2)),
+              if (widget.company.isRecruiting) const SizedBox(width: 10),
+              if (widget.company.daysLeft > 0)
+                _buildTag('${widget.company.daysLeft}일 남음',
+                    const Color(0xFFFFF2F8), const Color(0xFFA139B2)),
             ],
           ),
         ],
@@ -93,7 +153,7 @@ class CompanyDetailPage extends StatelessWidget {
           const Text('회사 소개',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
-          Text(company.detailedDescription,
+          Text(widget.company.detailedDescription,
               style: const TextStyle(fontSize: 16)),
         ],
       ),
@@ -106,21 +166,51 @@ class CompanyDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('지원 요건',
+          const Text('이런 부분을 고려해요',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
-          ...company.requirements
-              .map((req) => Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.check, size: 20, color: Colors.green),
-                        const SizedBox(width: 10),
-                        Text(req, style: const TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ))
+          ...widget.company.requirements
+              .map((req) => _buildRequirementCard(req))
               .toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRequirementCard(String requirement) {
+    return Container(
+      width: 350,
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(18),
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            requirement,
+            style: const TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 16,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            widget.company.requirementDetails[requirement] ?? '',
+            style: const TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 14,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
         ],
       ),
     );
@@ -132,28 +222,113 @@ class CompanyDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('현재 모집 중인 오디션',
+          const Text('현재 모집중인 오디션',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
-          if (company.currentAuditions.isEmpty)
+          if (widget.company.currentAuditions.isEmpty)
             const Text('현재 진행 중인 오디션이 없습니다.',
                 style: TextStyle(fontSize: 16, color: Colors.grey))
           else
-            ...company.currentAuditions
-                .map((audition) => Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(audition.title,
-                              style: const TextStyle(fontSize: 16)),
-                          Text('마감: ${audition.deadline}',
-                              style: const TextStyle(
-                                  fontSize: 14, color: Colors.grey)),
-                        ],
-                      ),
-                    ))
-                .toList(),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: widget.company.currentAuditions
+                    .map((audition) => _buildAuditionCard(audition))
+                    .toList(),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAuditionCard(Audition audition) {
+    return Container(
+      width: 165,
+      height: 136,
+      margin: const EdgeInsets.only(right: 10),
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 10, top: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    audition.title,
+                    style: const TextStyle(
+                      color: Color(0xFF434343),
+                      fontSize: 13.5,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  icon: Icon(
+                    audition.isFavorite
+                        ? Icons.bookmark
+                        : Icons.bookmark_border,
+                    color: audition.isFavorite ? Colors.pink : Colors.grey,
+                    size: 25,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      audition.isFavorite = !audition.isFavorite;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, top: 2),
+            child: Text(
+              '모집기간: ${audition.deadline}',
+              style: const TextStyle(
+                color: Color(0xFF878787),
+                fontSize: 12,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          const Spacer(),
+          Container(
+            width: double.infinity,
+            height: 36,
+            decoration: const BoxDecoration(
+              color: Color(0xFFEF69A6),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                bottomRight: Radius.circular(8),
+              ),
+            ),
+            alignment: Alignment.center,
+            child: const Text(
+              '지원하기',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
     );

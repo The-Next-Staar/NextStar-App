@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'mainpage.dart';
+import 'mainpage/main_page.dart';
 
 class ProfileCreatePage extends StatelessWidget {
   @override

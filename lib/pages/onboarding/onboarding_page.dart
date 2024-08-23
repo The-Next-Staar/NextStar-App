@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
 import '../login/login_page.dart';
 
@@ -7,6 +6,7 @@ class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _OnboardingPageState createState() => _OnboardingPageState();
 }
 

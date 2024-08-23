@@ -8,6 +8,9 @@ class Company {
   final String detailedDescription;
   final List<String> requirements;
   final List<Audition> currentAuditions;
+  final Map<String, String> requirementDetails;
+  final String imagePath;
+  bool isFavorite = false;
 
   Company({
     required this.name,
@@ -19,14 +22,21 @@ class Company {
     required this.detailedDescription,
     required this.requirements,
     required this.currentAuditions,
+    required this.requirementDetails,
+    required this.imagePath,
+    this.isFavorite = false,
   });
+
+  bool get favorite => isFavorite;
 }
 
 class Audition {
   final String title;
   final String deadline;
+  bool isFavorite;
 
-  Audition({required this.title, required this.deadline});
+  Audition(
+      {required this.title, required this.deadline, this.isFavorite = false});
 }
 
 final List<Company> sampleCompanies = [
@@ -34,7 +44,7 @@ final List<Company> sampleCompanies = [
     name: 'JYP Entertainment',
     description: '차세대 스타를 찾고 있습니다.\n지금 그 주인공이 되어보세요.',
     isRecruiting: true,
-    daysLeft: 7,
+    daysLeft: 1,
     industry: '엔터테인먼트',
     location: '서울 강동구',
     detailedDescription:
@@ -44,17 +54,102 @@ final List<Company> sampleCompanies = [
       Audition(title: '24년 상반기 오디션 (여자)', deadline: '24.08.20'),
       Audition(title: '24년 상반기 오디션 (남자)', deadline: '24.08.20'),
     ],
+    requirementDetails: {
+      '댄스': '다양한 장르의 댄스를 소화할 수 있는 능력을 요구합니다.',
+      '보컬': '넓은 음역대와 풍부한 감정을 전달할 수 있는 보컬 역량을 중시합니다.',
+      '랩': '정확한 발음과 창의적인 가사 작성 능력이 필요합니다.',
+      '작곡': '멜로디와 리듬을 창작할 수 있는 작곡 능력을 기대합니다.',
+    },
+    imagePath: 'assets/images/details/jyp_entertainment.png',
   ),
   Company(
     name: 'SM Entertainment',
     description: '글로벌 스타의 꿈을 실현하세요.',
-    isRecruiting: false,
-    daysLeft: 0,
+    isRecruiting: true,
+    daysLeft: 5,
     industry: '엔터테인먼트',
     location: '서울 강남구',
     detailedDescription:
         'SM엔터테인먼트는 한국을 대표하는 종합 엔터테인먼트 기업입니다. 우리는 음악 제작부터 아티스트 매니지먼트, 콘서트 기획까지 다양한 사업을 영위하고 있습니다.',
     requirements: ['보컬', '댄스', '외국어 능력'],
+    currentAuditions: [
+      Audition(title: '24년 하반기 오디션 (여자)', deadline: '24.12.20'),
+    ],
+    requirementDetails: {
+      '보컬': '강력한 발성과 고유의 음색을 가진 보컬리스트를 선호합니다.',
+      '댄스': '독창적이고 에너지 넘치는 퍼포먼스를 보여줄 수 있어야 합니다.',
+      '외국어 능력': '글로벌 활동을 위한 영어, 중국어 등의 외국어 능력이 중요합니다.',
+    },
+    imagePath: 'assets/images/details/sm_entertainment.png',
+  ),
+  Company(
+    name: 'YG Entertainment',
+    description: '새로운 도전을 기다리고 있습니다.',
+    isRecruiting: true,
+    daysLeft: 10,
+    industry: '엔터테인먼트',
+    location: '서울 마포구',
+    detailedDescription: 'YG엔터테인먼트는 혁신적인 음악과 스타일을 선도하는 엔터테인먼트 기업입니다.',
+    requirements: ['작사', '프로듀싱'],
+    currentAuditions: [
+      Audition(title: '24년 프로듀서 오디션', deadline: '24.09.10'),
+    ],
+    requirementDetails: {
+      '작사': '창의적인 가사 작성 능력을 중시합니다.',
+      '프로듀싱': '독창적인 음악을 제작할 수 있는 프로듀싱 역량을 기대합니다.',
+    },
+    imagePath: 'assets/images/details/yg_entertainment.png',
+  ),
+  Company(
+    name: 'HYBE Entertainment',
+    description: '글로벌 무대에 도전하세요.',
+    isRecruiting: true,
+    daysLeft: 14,
+    industry: '엔터테인먼트',
+    location: '서울 용산구',
+    detailedDescription: 'HYBE 엔터테인먼트는 글로벌 시장을 타겟으로 하는 차세대 아티스트를 발굴합니다.',
+    requirements: ['보컬', '댄스', '랩'],
+    currentAuditions: [
+      Audition(title: '24년 글로벌 오디션', deadline: '24.09.15'),
+    ],
+    requirementDetails: {
+      '보컬': '풍부한 감성과 파워풀한 보컬을 중시합니다.',
+      '댄스': '에너지 넘치는 퍼포먼스가 필요합니다.',
+      '랩': '정확한 발음과 리드미컬한 랩 능력이 중요합니다.',
+    },
+    imagePath: 'assets/images/details/hybe_entertainment.png',
+  ),
+  Company(
+    name: 'FNC Entertainment',
+    description: '함께 성장할 인재를 찾고 있습니다.',
+    isRecruiting: false,
+    daysLeft: 0,
+    industry: '엔터테인먼트',
+    location: '서울 강남구',
+    detailedDescription: 'FNC엔터테인먼트는 밴드와 연기자 매니지먼트에 강점을 가진 종합 엔터테인먼트 기업입니다.',
+    requirements: ['연기', '보컬', '기타 연주'],
     currentAuditions: [],
+    requirementDetails: {
+      '연기': '감정 전달력이 뛰어난 연기자를 찾고 있습니다.',
+      '보컬': '풍부한 감성을 가진 보컬리스트를 선호합니다.',
+      '기타 연주': '세련된 기타 연주 능력이 필요합니다.',
+    },
+    imagePath: 'assets/images/details/fnc_entertainment.png',
+  ),
+  Company(
+    name: 'Pledis Entertainment',
+    description: '미래를 함께 할 아티스트를 모집합니다.',
+    isRecruiting: false,
+    daysLeft: 0,
+    industry: '엔터테인먼트',
+    location: '서울 강남구',
+    detailedDescription: 'Pledis 엔터테인먼트는 아티스트의 성장과 함께하는 글로벌 엔터테인먼트 기업입니다.',
+    requirements: ['보컬', '댄스'],
+    currentAuditions: [],
+    requirementDetails: {
+      '보컬': '기본기가 탄탄한 보컬리스트를 선호합니다.',
+      '댄스': '무대에서 자신감을 발휘할 수 있는 댄스 실력을 중시합니다.',
+    },
+    imagePath: 'assets/images/details/pledis_entertainment.png',
   ),
 ];
