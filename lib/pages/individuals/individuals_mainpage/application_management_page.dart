@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../models/casting.dart';
-import '../../../models/company.dart';
 import '../proposal_page.dart';
 
 class ApplicationManagementPage extends StatefulWidget {

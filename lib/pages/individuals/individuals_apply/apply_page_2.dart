@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../models/company.dart';
-import '../mainpage/main_page.dart';
+import '../individuals_mainpage/main_page.dart';
 
 class ApplyPage2 extends StatefulWidget {
   final Audition audition;
@@ -68,13 +68,13 @@ class _ApplyPage2State extends State<ApplyPage2> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: _submitApplication,
-                  child: const Text('지원 계속하기'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF878787),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
+                  child: const Text('지원 계속하기'),
                 ),
               ),
             ],

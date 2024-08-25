@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../models/casting.dart';
 import '../../models/company.dart';
-import 'apply/apply_page_1.dart';
+import 'individuals_apply/apply_page_1.dart';
 
 class CompanyDetailPage extends StatefulWidget {
   final Company company;

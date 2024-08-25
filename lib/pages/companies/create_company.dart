@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'individuals_mainpage/main_page.dart';
+import 'companies_mainpage/main_page.dart';
 
 class ProfileCreatePage extends StatelessWidget {
+  const ProfileCreatePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -255,7 +257,7 @@ class ProfileCreatePage extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()),
+            MaterialPageRoute(builder: (context) => const MainPage()),
           );
         },
         style: ElevatedButton.styleFrom(
