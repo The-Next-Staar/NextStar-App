@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/onboarding/onboarding_page.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override

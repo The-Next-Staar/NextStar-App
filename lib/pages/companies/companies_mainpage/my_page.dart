@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 
+import '../../../models/company.dart';
+
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Company jyp = sampleCompanies[0];
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProfileSection(),
-            _buildSectionTitle('내 프로필 관리'),
-            _buildListItem('내 프로필 열람 기업 (20곳)'),
-            _buildListItem('프로필 수정하기'),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: _buildCompanyProfileSection(jyp),
+              ),
+            ),
             _buildSectionTitle('오디션 관리'),
-            _buildListItem('내 지원 현황 관리'),
-            _buildListItem('내가 저장한 기업'),
+            _buildListItem('오디션 공고 올리기'),
+            _buildListItem('오디션 공고 보기'),
+            _buildSectionTitle('캐스팅 관리'),
+            _buildListItem('캐스팅 메시지 관리'),
+            _buildListItem('캐스팅한 지원자 보기'),
             _buildSectionTitle('설정'),
             _buildListItem('시스템 설정'),
             _buildListItem('문의하기'),
@@ -26,45 +34,104 @@ class MyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileSection() {
+  Widget _buildCompanyProfileSection(Company company) {
     return Container(
-      margin: const EdgeInsets.only(left: 20, top: 40, bottom: 20, right: 20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF878787)),
-        borderRadius: BorderRadius.circular(8),
+      width: 350,
+      height: 234,
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          const Text(
-            '나의 프로필',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF434343),
+          Image.asset(
+            company.imagePath,
+            width: 350,
+            height: 234,
+            fit: BoxFit.cover,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+              ),
             ),
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Container(
-                width: 107,
-                height: 134,
-                color: const Color(0xFFD9D9D9),
-              ),
-              const SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('이름:', style: _profileTextStyle()),
-                  const SizedBox(height: 10),
-                  Text('나이:', style: _profileTextStyle()),
-                  const SizedBox(height: 10),
-                  Text('스펙:', style: _profileTextStyle()),
-                ],
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      '기업정보',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        '수정하기',
+                        style: TextStyle(
+                          color: Color(0xFF878787),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Text(
+                  company.company,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${company.industry} · ${company.location}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF878787),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    company.isRecruiting ? '모집 중' : '모집 전',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -101,14 +168,6 @@ class MyPage extends StatelessWidget {
           color: Color(0xFF434343),
         ),
       ),
-    );
-  }
-
-  TextStyle _profileTextStyle() {
-    return const TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
-      color: Color(0xFF434343),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nextstar_app/pages/individuals/create_profile.dart';
+
+import 'create_company.dart';
 
 class CompanyPopupPage extends StatelessWidget {
   final Color tnsMainPink = const Color(0xFFEF69A6);
@@ -72,7 +73,8 @@ class CompanyPopupPage extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfileCreatePage()),
+              MaterialPageRoute(
+                  builder: (context) => const CompanyCreatePage()),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -85,7 +87,7 @@ class CompanyPopupPage extends StatelessWidget {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           child: const Text(
-            '내 프로필 만들기',
+            '기업 등록하기',
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,

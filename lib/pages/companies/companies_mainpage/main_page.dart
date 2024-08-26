@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'company_list_page.dart';
-import 'application_management_page.dart';
+import 'search_page.dart';
+import 'search_results_page.dart';
+import 'proposal_management_page.dart';
 import 'my_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -12,19 +13,35 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
+  String _searchQuery = '';
 
-  final List<Widget> _pages = [
-    CompanyListPage(),
-    const ApplicationManagementPage(),
-    const MyPage(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      SearchPage(onSearch: _handleSearch),
+      SearchResultsPage(searchQuery: _searchQuery),
+      const ProposalManagementPage(),
+      const MyPage(),
+    ];
+  }
+
+  void _handleSearch(String query) {
+    setState(() {
+      _searchQuery = query;
+      _selectedIndex = 1;
+      _pages[1] = SearchResultsPage(searchQuery: _searchQuery);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          _buildCustomAppBar(),
+          _buildAppBar(),
           Expanded(
             child: _pages[_selectedIndex],
           ),
@@ -34,23 +51,22 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _buildCustomAppBar() {
+  Widget _buildAppBar() {
     return Container(
       width: double.infinity,
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Align(
-        alignment: Alignment.bottomCenter,
+      child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            const SizedBox(width: 24),
             Image.asset(
               'assets/images/the_next_star_logo_line.png',
-              width: 140,
-              height: 15.07,
+              width: 150,
               fit: BoxFit.contain,
             ),
-            const Icon(Icons.menu, size: 24, color: Color(0xFF171719)),
+            const SizedBox(width: 24),
           ],
         ),
       ),
@@ -69,22 +85,25 @@ class _MainPageState extends State<MainPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildBottomNavItem(0, 'companylist'),
-              _buildBottomNavItem(1, 'contact'),
-              _buildBottomNavItem(2, 'mypage'),
+              _buildBottomNavItem(0, 'finding'),
+              _buildBottomNavItem(2, 'contact'),
+              _buildBottomNavItem(3, 'mypage'),
             ],
           ),
           Positioned(
             top: 0,
             left: MediaQuery.of(context).size.width / 6 +
-                (_selectedIndex * MediaQuery.of(context).size.width / 3) -
+                (_selectedIndex == 0
+                    ? 0
+                    : (_selectedIndex - 1) *
+                        MediaQuery.of(context).size.width /
+                        3) -
                 24.5,
             child: Container(
               width: 49,
               height: 5,
-              decoration: BoxDecoration(
-                color: const Color(0xFF434343),
-                borderRadius: BorderRadius.circular(2.5),
+              decoration: const BoxDecoration(
+                color: Color(0xFF434343),
               ),
             ),
           ),
@@ -94,11 +113,16 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _buildBottomNavItem(int index, String label) {
-    bool isSelected = _selectedIndex == index;
+    bool isSelected =
+        _selectedIndex == index || (index == 0 && _selectedIndex <= 1);
     return GestureDetector(
       onTap: () {
         setState(() {
           _selectedIndex = index;
+          if (index == 0) {
+            _searchQuery = '';
+            _pages[1] = SearchResultsPage(searchQuery: _searchQuery);
+          }
         });
       },
       child: Column(

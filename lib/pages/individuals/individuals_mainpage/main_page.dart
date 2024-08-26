@@ -24,7 +24,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: Column(
         children: [
-          _buildCustomAppBar(),
+          _buildAppBar(),
           Expanded(
             child: _pages[_selectedIndex],
           ),
@@ -34,23 +34,22 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _buildCustomAppBar() {
+  Widget _buildAppBar() {
     return Container(
       width: double.infinity,
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Align(
-        alignment: Alignment.bottomCenter,
+      child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            const SizedBox(width: 24),
             Image.asset(
               'assets/images/the_next_star_logo_line.png',
-              width: 140,
-              height: 15.07,
+              width: 150,
               fit: BoxFit.contain,
             ),
-            const Icon(Icons.menu, size: 24, color: Color(0xFF171719)),
+            const SizedBox(width: 24),
           ],
         ),
       ),
@@ -82,9 +81,8 @@ class _MainPageState extends State<MainPage> {
             child: Container(
               width: 49,
               height: 5,
-              decoration: BoxDecoration(
-                color: const Color(0xFF434343),
-                borderRadius: BorderRadius.circular(2.5),
+              decoration: const BoxDecoration(
+                color: Color(0xFF434343),
               ),
             ),
           ),

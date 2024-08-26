@@ -1,8 +1,31 @@
 import 'package:flutter/material.dart';
 import 'companies_mainpage/main_page.dart';
 
-class ProfileCreatePage extends StatelessWidget {
-  const ProfileCreatePage({super.key});
+class CompanyCreatePage extends StatefulWidget {
+  const CompanyCreatePage({Key? key}) : super(key: key);
+
+  @override
+  _CompanyCreatePageState createState() => _CompanyCreatePageState();
+}
+
+class _CompanyCreatePageState extends State<CompanyCreatePage> {
+  final TextEditingController _hashtagController = TextEditingController();
+  final List<String> _hashtags = [];
+
+  @override
+  void dispose() {
+    _hashtagController.dispose();
+    super.dispose();
+  }
+
+  void _addHashtag(String tag) {
+    if (tag.isNotEmpty && !_hashtags.contains(tag)) {
+      setState(() {
+        _hashtags.add(tag);
+        _hashtagController.clear();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +45,7 @@ class ProfileCreatePage extends StatelessWidget {
                       const SizedBox(height: 20),
                       _buildNameField(),
                       const SizedBox(height: 20),
-                      _buildAgeField(),
+                      _buildHashtagField(),
                       const SizedBox(height: 20),
                       _buildSpecsField(),
                       _buildSubmitButton(context),
@@ -50,7 +73,7 @@ class ProfileCreatePage extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           const Text(
-            '내 프로필 만들기',
+            '기업 등록하기',
             style: TextStyle(
               color: Color(0xFF434343),
               fontSize: 18,
@@ -66,8 +89,8 @@ class ProfileCreatePage extends StatelessWidget {
   Widget _buildProfileImage() {
     return Center(
       child: Container(
-        width: 161,
-        height: 161,
+        width: 320,
+        height: 200,
         decoration: BoxDecoration(
           color: const Color(0xFFD9D9D9),
           borderRadius: BorderRadius.circular(10),
@@ -82,7 +105,7 @@ class ProfileCreatePage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '이름',
+          '기업 명',
           style: TextStyle(
             color: Color(0xFF434343),
             fontSize: 18,
@@ -99,7 +122,7 @@ class ProfileCreatePage extends StatelessWidget {
           ),
           child: const TextField(
             decoration: InputDecoration(
-              hintText: '이름을 입력하세요.',
+              hintText: '기업 명을 입력하세요.',
               hintStyle: TextStyle(color: Color(0xFFCBCBCB)),
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 20),
@@ -110,12 +133,12 @@ class ProfileCreatePage extends StatelessWidget {
     );
   }
 
-  Widget _buildAgeField() {
+  Widget _buildHashtagField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '나이',
+          '해시태그',
           style: TextStyle(
             color: Color(0xFF434343),
             fontSize: 18,
@@ -125,28 +148,99 @@ class ProfileCreatePage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Container(
+          width: 350,
           height: 45,
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: const Color(0xFFF4F4F5),
-            borderRadius: BorderRadius.circular(6),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           ),
-          child: const Row(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    '나이를 선택하세요.',
-                    style: TextStyle(color: Color(0xFF434343)),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ..._hashtags.map(_buildHashtagChip),
+                      SizedBox(
+                        width: 100,
+                        child: TextField(
+                          controller: _hashtagController,
+                          decoration: const InputDecoration(
+                            hintText: '해시태그...',
+                            hintStyle: TextStyle(color: Color(0xFF878787)),
+                            border: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10),
+                          ),
+                          onChanged: (value) {
+                            if (value.endsWith(' ')) {
+                              _addHashtag(value.trim());
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Icon(Icons.arrow_drop_down, color: Color(0xFFD9D9D9)),
-              SizedBox(width: 20),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildHashtagChip(String tag) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: ShapeDecoration(
+        color: const Color(0xFFD9D9D9),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            '#$tag',
+            style: const TextStyle(
+              color: Color(0xFF878787),
+              fontSize: 14,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+              letterSpacing: 0.35,
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _hashtags.remove(tag);
+              });
+            },
+            child: Container(
+              width: 14,
+              height: 14,
+              decoration: const ShapeDecoration(
+                color: Color(0xFFF4F4F5),
+                shape: OvalBorder(),
+              ),
+              child: const Icon(
+                Icons.close,
+                size: 10,
+                color: Color(0xFF878787),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

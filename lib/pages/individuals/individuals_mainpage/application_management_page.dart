@@ -69,7 +69,7 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: isSelected
-                  ? const Color(0xFF434343)
+                  ? const Color.fromARGB(255, 127, 75, 75)
                   : const Color(0xFF878787),
               fontSize: 16,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
