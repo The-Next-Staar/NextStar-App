@@ -1,33 +1,73 @@
 class Company {
-  final String company;
-  final String description;
-  final bool isRecruiting;
-  final int daysLeft;
-  final String industry;
-  final String location;
-  final String detailedDescription;
-  final List<String> requirements;
-  final List<Audition> currentAuditions;
-  final Map<String, String> requirementDetails;
-  final String imagePath;
-  bool isFavorite = false;
+  String company;
+  String description;
+  bool isRecruiting;
+  int daysLeft;
+  String industry;
+  String location;
+  String detailedDescription;
+  List<String> requirements;
+  List<Audition> currentAuditions;
+  Map<String, String> requirementDetails;
+  String imagePath;
+  String logoPath;
+  bool isFavorite;
+  String website;
 
   Company({
-    required this.company,
-    required this.description,
-    required this.isRecruiting,
-    required this.daysLeft,
-    required this.industry,
-    required this.location,
-    required this.detailedDescription,
-    required this.requirements,
-    required this.currentAuditions,
-    required this.requirementDetails,
-    required this.imagePath,
+    this.company = 'JYP Entertainment',
+    this.description = '차세대 스타를 찾고 있습니다.\n지금 그 주인공이 되어보세요.',
+    this.isRecruiting = true,
+    this.daysLeft = 1,
+    this.industry = '엔터테인먼트',
+    this.location = '서울 강동구',
+    this.detailedDescription =
+        'JYP엔터테인먼트는 K-POP을 선도하는 글로벌 엔터테인먼트 기업입니다. 우리는 음악, 공연, 영상 등 다양한 분야에서 혁신적인 콘텐츠를 제작하고 있습니다.',
+    this.requirements = const ['댄스', '보컬', '랩', '작곡'],
+    List<Audition>? currentAuditions,
+    Map<String, String>? requirementDetails,
+    this.imagePath = 'assets/images/details/jyp_entertainment.png',
+    this.logoPath = 'assets/images/logos/jyp_logo.png',
     this.isFavorite = false,
-  });
+    this.website = 'https://www.jype.com',
+  })  : currentAuditions = currentAuditions ?? [],
+        requirementDetails = requirementDetails ??
+            {
+              '댄스': '다양한 장르의 댄스를 소화할 수 있는 능력을 요구합니다.',
+              '보컬': '넓은 음역대와 풍부한 감정을 전달할 수 있는 보컬 역량을 중시합니다.',
+              '랩': '정확한 발음과 창의적인 가사 작성 능력이 필요합니다.',
+              '작곡': '멜로디와 리듬을 창작할 수 있는 작곡 능력을 기대합니다.',
+            };
 
   bool get favorite => isFavorite;
+
+  void updateInfo({
+    String? company,
+    String? description,
+    String? industry,
+    String? location,
+    String? detailedDescription,
+    String? website,
+    String? imagePath,
+    String? logoPath,
+    bool? isRecruiting,
+    int? daysLeft,
+    List<String>? requirements,
+    Map<String, String>? requirementDetails,
+  }) {
+    this.company = company ?? this.company;
+    this.description = description ?? this.description;
+    this.industry = industry ?? this.industry;
+    this.location = location ?? this.location;
+    this.detailedDescription = detailedDescription ?? this.detailedDescription;
+    this.website = website ?? this.website;
+    this.imagePath = imagePath ?? this.imagePath;
+    this.logoPath = logoPath ?? this.logoPath;
+    this.isRecruiting = isRecruiting ?? this.isRecruiting;
+    this.daysLeft = daysLeft ?? this.daysLeft;
+    this.requirements = requirements ?? this.requirements;
+    this.requirementDetails = requirementDetails ?? this.requirementDetails;
+  }
 }
 
 class Audition {
@@ -63,6 +103,8 @@ List<Company> sampleCompanies = [
       '작곡': '멜로디와 리듬을 창작할 수 있는 작곡 능력을 기대합니다.',
     },
     imagePath: 'assets/images/details/jyp_entertainment.png',
+    logoPath: 'assets/images/logos/jyp_logo.png',
+    website: 'https://www.jype.com',
   ),
   Company(
     company: 'SM Entertainment',
@@ -81,6 +123,8 @@ List<Company> sampleCompanies = [
       '외국어 능력': '글로벌 활동을 위한 영어, 중국어 등의 외국어 능력이 중요합니다.',
     },
     imagePath: 'assets/images/details/sm_entertainment.png',
+    logoPath: 'assets/images/logos/sm_logo.png',
+    website: 'https://www.smentertainment.com',
   ),
   Company(
     company: 'YG Entertainment',
@@ -97,6 +141,8 @@ List<Company> sampleCompanies = [
       '프로듀싱': '독창적인 음악을 제작할 수 있는 프로듀싱 역량을 기대합니다.',
     },
     imagePath: 'assets/images/details/yg_entertainment.png',
+    logoPath: 'assets/images/logos/yg_logo.png',
+    website: 'https://www.ygfamily.com',
   ),
   Company(
     company: 'HYBE Entertainment',
@@ -114,6 +160,8 @@ List<Company> sampleCompanies = [
       '랩': '정확한 발음과 리드미컬한 랩 능력이 중요합니다.',
     },
     imagePath: 'assets/images/details/hybe_entertainment.png',
+    logoPath: 'assets/images/logos/hybe_logo.png',
+    website: 'https://www.hybecorp.com',
   ),
   Company(
     company: 'FNC Entertainment',
@@ -131,6 +179,8 @@ List<Company> sampleCompanies = [
       '기타 연주': '세련된 기타 연주 능력이 필요합니다.',
     },
     imagePath: 'assets/images/details/fnc_entertainment.png',
+    logoPath: 'assets/images/logos/fnc_logo.png',
+    website: 'https://www.fncent.com',
   ),
   Company(
     company: 'Pledis Entertainment',
@@ -147,6 +197,8 @@ List<Company> sampleCompanies = [
       '댄스': '무대에서 자신감을 발휘할 수 있는 댄스 실력을 중시합니다.',
     },
     imagePath: 'assets/images/details/pledis_entertainment.png',
+    logoPath: 'assets/images/logos/pledis_logo.png',
+    website: 'https://www.pledis.co.kr',
   ),
 ];
 

@@ -65,7 +65,10 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
             child: Container(
               width: 350,
               height: 2,
-              decoration: const BoxDecoration(color: Color(0xFFCBCBCB)),
+              decoration: BoxDecoration(
+                  color: _isProposalList
+                      ? const Color(0xFFCBCBCB)
+                      : const Color(0xFFEF69A6)),
             ),
           ),
           Positioned(
