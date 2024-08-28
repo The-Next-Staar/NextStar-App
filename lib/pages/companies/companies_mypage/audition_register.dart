@@ -15,8 +15,9 @@ class _AuditionRegisterPageState extends State<AuditionRegisterPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
-  DateTime? _deadline;
   String _selectedGender = '성별 무관';
+  bool _isAlwaysRecruiting = false;
+  DateTime? _deadline;
 
   @override
   void initState() {
@@ -35,60 +36,58 @@ class _AuditionRegisterPageState extends State<AuditionRegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          _buildAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildCompanyInfo(),
-                      const SizedBox(height: 20),
-                      _buildTitleField(),
-                      _buildGenderSelector(),
-                      _buildDeadlinePicker(),
-                      _buildDescriptionField(),
-                      const SizedBox(height: 20),
-                      _buildRegisterButton(),
-                    ],
-                  ),
-                ),
-              ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildAppBar(context),
+                const SizedBox(height: 10),
+                _buildCompanyInfo(),
+                const SizedBox(height: 30),
+                _buildTitleField(),
+                const SizedBox(height: 10),
+                _buildGenderSelector(),
+                const SizedBox(height: 30),
+                _buildRecruitmentPeriod(),
+                const SizedBox(height: 30),
+                _buildDescriptionField(),
+              ],
             ),
           ),
-        ],
+        ),
       ),
+      bottomNavigationBar: _buildRegisterButton(),
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(BuildContext context) {
     return Container(
       width: double.infinity,
       height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             IconButton(
               icon: const Icon(Icons.arrow_back, color: Color(0xFF171719)),
               onPressed: () => Navigator.pop(context),
             ),
             const Text(
-              '오디션 공고 등록하기',
+              '오디션 공고 등록',
               style: TextStyle(
-                color: Color(0xFF434343),
+                color: Color(0xFF171719),
                 fontSize: 18,
+                fontWeight: FontWeight.bold,
                 fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(width: 32),
+            const SizedBox(width: 40),
           ],
         ),
       ),
@@ -97,8 +96,7 @@ class _AuditionRegisterPageState extends State<AuditionRegisterPage> {
 
   Widget _buildCompanyInfo() {
     return Container(
-      width: double.infinity,
-      height: 129,
+      height: 150,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         image: DecorationImage(
@@ -106,128 +104,267 @@ class _AuditionRegisterPageState extends State<AuditionRegisterPage> {
           fit: BoxFit.cover,
         ),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+              ),
+            ),
           ),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.company.company,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w700,
-              ),
+          Positioned(
+            left: 20,
+            bottom: 20,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.company.company,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Pretendard'),
+                ),
+                Text(
+                  '${widget.company.industry} · ${widget.company.location}',
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontFamily: 'Pretendard'),
+                ),
+              ],
             ),
-            Text(
-              '${widget.company.industry} · ${widget.company.location}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w500,
-              ),
+          ),
+          const Positioned(
+            right: 20,
+            top: 20,
+            child: Text(
+              '상세보기',
+              style: TextStyle(
+                  color: Colors.white, fontSize: 14, fontFamily: 'Pretendard'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildTitleField() {
-    return TextFormField(
-      controller: _titleController,
-      decoration: const InputDecoration(labelText: '공고 제목'),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return '공고 제목을 입력해주세요';
-        }
-        return null;
-      },
+    return Container(
+      height: 45,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F4F5),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: TextFormField(
+        controller: _titleController,
+        decoration: const InputDecoration(
+          hintText: '공고 제목',
+          hintStyle: TextStyle(
+              color: Color(0xFF434343), fontSize: 14, fontFamily: 'Pretendard'),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 20),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '공고 제목을 입력해주세요';
+          }
+          return null;
+        },
+      ),
     );
   }
 
   Widget _buildGenderSelector() {
-    return DropdownButtonFormField<String>(
-      value: _selectedGender,
-      decoration: const InputDecoration(labelText: '모집 성별'),
-      items: ['성별 무관', '남자', '여자']
-          .map((label) => DropdownMenuItem(
-                value: label,
-                child: Text(label),
-              ))
-          .toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedGender = value!;
-        });
-      },
+    return Container(
+      height: 45,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F4F5),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedGender,
+          icon: const Icon(Icons.arrow_drop_down, color: Color(0xFFD9D9D9)),
+          isExpanded: true,
+          style: const TextStyle(
+              color: Color(0xFF434343), fontSize: 14, fontFamily: 'Pretendard'),
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedGender = newValue!;
+            });
+          },
+          items: <String>['성별 무관', '남자', '여자']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Text(value),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 
-  Widget _buildDeadlinePicker() {
-    return TextFormField(
-      readOnly: true,
-      decoration: const InputDecoration(labelText: '마감일'),
-      controller: TextEditingController(
-        text: _deadline != null
-            ? "${_deadline!.year}.${_deadline!.month.toString().padLeft(2, '0')}.${_deadline!.day.toString().padLeft(2, '0')}"
-            : "",
-      ),
-      onTap: () async {
-        final pickedDate = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now().add(const Duration(days: 1)),
-          firstDate: DateTime.now().add(const Duration(days: 1)),
-          lastDate: DateTime.now().add(const Duration(days: 365)),
-        );
-        if (pickedDate != null) {
-          setState(() {
-            _deadline = pickedDate;
-          });
-        }
-      },
-      validator: (value) {
-        if (_deadline == null) {
-          return '마감일을 선택해주세요';
-        }
-        return null;
-      },
+  Widget _buildRecruitmentPeriod() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('모집 기간',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Pretendard')),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('상시모집',
+                    style: TextStyle(
+                        color: Color(0xFF878787),
+                        fontSize: 14,
+                        fontFamily: 'Pretendard')),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Checkbox(
+                    value: _isAlwaysRecruiting,
+                    onChanged: (value) {
+                      setState(() {
+                        _isAlwaysRecruiting = value!;
+                      });
+                    },
+                    activeColor: const Color(0xFFEF69A6),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Container(
+          height: 45,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF4F4F5),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              TextFormField(
+                readOnly: true,
+                enabled: !_isAlwaysRecruiting,
+                decoration: InputDecoration(
+                  hintText: _isAlwaysRecruiting ? '상시 모집' : '기간 설정',
+                  hintStyle: const TextStyle(
+                      color: Color(0xFF878787),
+                      fontSize: 14,
+                      fontFamily: 'Pretendard'),
+                  border: InputBorder.none,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  suffixIcon: const Icon(Icons.calendar_today,
+                      color: Color(0xFFD9D9D9)),
+                ),
+                onTap: _isAlwaysRecruiting
+                    ? null
+                    : () async {
+                        final pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate:
+                              DateTime.now().add(const Duration(days: 1)),
+                          firstDate:
+                              DateTime.now().add(const Duration(days: 1)),
+                          lastDate:
+                              DateTime.now().add(const Duration(days: 365)),
+                        );
+                        if (pickedDate != null && pickedDate != _deadline) {
+                          setState(() {
+                            _deadline = pickedDate;
+                          });
+                        }
+                      },
+                controller: TextEditingController(
+                  text: _isAlwaysRecruiting
+                      ? '상시 모집'
+                      : (_deadline != null
+                          ? "${_deadline!.year}.${_deadline!.month.toString().padLeft(2, '0')}.${_deadline!.day.toString().padLeft(2, '0')}"
+                          : ""),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildDescriptionField() {
-    return TextFormField(
-      controller: _descriptionController,
-      decoration: const InputDecoration(labelText: '공고 내용'),
-      maxLines: 5,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return '공고 내용을 입력해주세요';
-        }
-        return null;
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('공고 내용',
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Pretendard')),
+        const SizedBox(height: 10),
+        Container(
+          height: 150,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: const Color(0xFFD9D9D9)),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: TextFormField(
+            controller: _descriptionController,
+            decoration: const InputDecoration(
+              hintText: '내용을 입력해주세요.',
+              hintStyle: TextStyle(
+                  color: Color(0xFFCBCBCB),
+                  fontSize: 14,
+                  fontFamily: 'Pretendard'),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.all(20),
+            ),
+            maxLines: null,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return '공고 내용을 입력해주세요';
+              }
+              return null;
+            },
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildRegisterButton() {
     return Container(
-      width: double.infinity,
-      height: 44,
+      padding: const EdgeInsets.all(20),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Color(0xFFD9D9D9))),
+      ),
       child: ElevatedButton(
         onPressed: _registerAudition,
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFEF69A6),
+          minimumSize: const Size(double.infinity, 44),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6),
           ),
@@ -237,8 +374,8 @@ class _AuditionRegisterPageState extends State<AuditionRegisterPage> {
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
-            fontFamily: 'Pretendard',
             fontWeight: FontWeight.w600,
+            fontFamily: 'Pretendard',
           ),
         ),
       ),
@@ -249,16 +386,24 @@ class _AuditionRegisterPageState extends State<AuditionRegisterPage> {
     if (_formKey.currentState!.validate()) {
       final newAudition = Audition(
         title: _titleController.text,
-        deadline:
-            "${_deadline!.year}.${_deadline!.month.toString().padLeft(2, '0')}.${_deadline!.day.toString().padLeft(2, '0')}",
+        deadline: _isAlwaysRecruiting
+            ? "상시모집"
+            : (_deadline != null
+                ? "${_deadline!.year}.${_deadline!.month.toString().padLeft(2, '0')}.${_deadline!.day.toString().padLeft(2, '0')}"
+                : ""),
         company: widget.company,
       );
 
       setState(() {
         widget.company.currentAuditions.add(newAudition);
+        widget.company.isRecruiting = true;
       });
 
-      Navigator.pop(context, newAudition);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('오디션 공고가 성공적으로 등록되었습니다.')),
+      );
+
+      Navigator.pop(context);
     }
   }
 }

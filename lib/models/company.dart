@@ -15,29 +15,41 @@ class Company {
   String website;
 
   Company({
-    this.company = 'JYP Entertainment',
-    this.description = '차세대 스타를 찾고 있습니다.\n지금 그 주인공이 되어보세요.',
-    this.isRecruiting = true,
-    this.daysLeft = 1,
-    this.industry = '엔터테인먼트',
-    this.location = '서울 강동구',
-    this.detailedDescription =
-        'JYP엔터테인먼트는 K-POP을 선도하는 글로벌 엔터테인먼트 기업입니다. 우리는 음악, 공연, 영상 등 다양한 분야에서 혁신적인 콘텐츠를 제작하고 있습니다.',
-    this.requirements = const ['댄스', '보컬', '랩', '작곡'],
+    this.company = '',
+    this.description = '',
+    this.isRecruiting = false,
+    this.daysLeft = 0,
+    this.industry = '',
+    this.location = '',
+    this.detailedDescription = '',
+    this.requirements = const [],
     List<Audition>? currentAuditions,
     Map<String, String>? requirementDetails,
-    this.imagePath = 'assets/images/details/jyp_entertainment.png',
-    this.logoPath = 'assets/images/logos/jyp_logo.png',
+    this.imagePath = '',
+    this.logoPath = '',
     this.isFavorite = false,
-    this.website = 'https://www.jype.com',
+    this.website = '',
   })  : currentAuditions = currentAuditions ?? [],
-        requirementDetails = requirementDetails ??
-            {
-              '댄스': '다양한 장르의 댄스를 소화할 수 있는 능력을 요구합니다.',
-              '보컬': '넓은 음역대와 풍부한 감정을 전달할 수 있는 보컬 역량을 중시합니다.',
-              '랩': '정확한 발음과 창의적인 가사 작성 능력이 필요합니다.',
-              '작곡': '멜로디와 리듬을 창작할 수 있는 작곡 능력을 기대합니다.',
-            };
+        requirementDetails = requirementDetails ?? {};
+
+  factory Company.empty() {
+    return Company(
+      company: '',
+      description: '',
+      isRecruiting: false,
+      daysLeft: 0,
+      industry: '',
+      location: '',
+      detailedDescription: '',
+      requirements: [],
+      currentAuditions: [],
+      requirementDetails: {},
+      imagePath: '',
+      logoPath: '',
+      isFavorite: false,
+      website: '',
+    );
+  }
 
   bool get favorite => isFavorite;
 

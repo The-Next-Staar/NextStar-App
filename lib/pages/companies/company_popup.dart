@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../models/company.dart';
 import 'create_company.dart';
 
 class CompanyPopupPage extends StatelessWidget {
@@ -74,7 +74,10 @@ class CompanyPopupPage extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const CompanyCreatePage()),
+                builder: (context) => CompanyCreatePage(
+                  company: Company(),
+                ),
+              ),
             );
           },
           style: ElevatedButton.styleFrom(
