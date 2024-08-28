@@ -40,7 +40,6 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
                   _buildDetailedDescription(),
                   _buildRequirements(),
                   _buildCurrentAuditions(),
-                  _buildCompanyCastings(),
                 ],
               ),
             ),
@@ -358,33 +357,6 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
       child: Text(
         label,
         style: TextStyle(color: textColor, fontSize: 12),
-      ),
-    );
-  }
-
-  Widget _buildCompanyCastings() {
-    List<Casting> companyCastings = sampleCastings
-        .where((casting) => casting.company == widget.company)
-        .toList();
-
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('현재 진행 중인 캐스팅',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-          if (companyCastings.isEmpty)
-            const Text('현재 진행 중인 캐스팅이 없습니다.',
-                style: TextStyle(fontSize: 16, color: Colors.grey))
-          else
-            Column(
-              children: companyCastings
-                  .map((casting) => _buildCastingCard(casting))
-                  .toList(),
-            ),
-        ],
       ),
     );
   }
