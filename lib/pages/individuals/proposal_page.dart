@@ -131,13 +131,6 @@ class _ProposalPageState extends State<ProposalPage> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(
-                    '수정하기',
-                    style: TextStyle(
-                      color: Color(0xFF878787),
-                      fontSize: 13,
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: 5),
@@ -269,12 +262,12 @@ class _ProposalPageState extends State<ProposalPage> {
             Navigator.pop(context);
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF878787),
+            backgroundColor: const Color(0xFFEF69A6),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
           ),
-          child: const Text('승인하기'),
+          child: const Text('승인하기', style: TextStyle(color: Colors.white)),
         ),
       ),
     );
@@ -293,12 +286,12 @@ class _ProposalPageState extends State<ProposalPage> {
             Navigator.pop(context);
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFD9D9D9),
+            backgroundColor: const Color(0xFFFECDE0),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
           ),
-          child: const Text('거절하기'),
+          child: const Text('거절하기', style: TextStyle(color: Colors.white)),
         ),
       ),
     );

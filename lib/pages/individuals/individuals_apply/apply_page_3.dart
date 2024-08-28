@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nextstar_app/pages/individuals/individuals_mainpage/application_management_page.dart';
 import 'package:nextstar_app/pages/individuals/individuals_mainpage/main_page.dart';
 import 'dart:io';
 import '../../../models/company.dart';
@@ -15,7 +14,7 @@ class ApplyPage3 extends StatefulWidget {
   final File? songFile;
 
   const ApplyPage3({
-    Key? key,
+    super.key,
     required this.company,
     required this.audition,
     required this.name,
@@ -24,7 +23,7 @@ class ApplyPage3 extends StatefulWidget {
     this.danceVideo,
     this.introductionVideo,
     this.songFile,
-  }) : super(key: key);
+  });
 
   @override
   _ApplyPage3State createState() => _ApplyPage3State();

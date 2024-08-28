@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'company_list_page.dart';
 import 'application_management_page.dart';
+import 'management_subscription_page.dart';
 import 'my_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -16,6 +17,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     CompanyListPage(),
     const ApplicationManagementPage(),
+    SubscriptionPage(),
     const MyPage(),
   ];
 
@@ -70,14 +72,15 @@ class _MainPageState extends State<MainPage> {
             children: [
               _buildBottomNavItem(0, 'companylist'),
               _buildBottomNavItem(1, 'contact'),
-              _buildBottomNavItem(2, 'mypage'),
+              _buildBottomNavItem(2, 'sub'),
+              _buildBottomNavItem(3, 'mypage')
             ],
           ),
           Positioned(
             top: 0,
             left: MediaQuery.of(context).size.width / 6 +
-                (_selectedIndex * MediaQuery.of(context).size.width / 3) -
-                24.5,
+                (_selectedIndex * MediaQuery.of(context).size.width / 4) -
+                40,
             child: Container(
               width: 49,
               height: 5,

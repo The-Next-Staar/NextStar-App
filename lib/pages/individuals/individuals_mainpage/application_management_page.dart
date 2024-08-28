@@ -59,7 +59,7 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
             border: Border(
               bottom: BorderSide(
                 color:
-                    isSelected ? const Color(0xFF434343) : Colors.transparent,
+                    isSelected ? const Color(0xFFEF69A6) : Colors.transparent,
                 width: 2,
               ),
             ),
@@ -69,7 +69,7 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: isSelected
-                  ? const Color.fromARGB(255, 127, 75, 75)
+                  ? const Color(0xFFEF69A6)
                   : const Color(0xFF878787),
               fontSize: 16,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
@@ -219,17 +219,19 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: status == '거절'
-                      ? const Color(0xFF878787)
-                      : const Color(0xFFF4F4F5),
+                  border: status == '거절'
+                      ? Border.all(color: const Color(0xFF888888))
+                      : null,
+                  color:
+                      status == '거절' ? Colors.white : const Color(0xFFEF69A6),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(status,
                     style: TextStyle(
                         fontSize: 12,
                         color: status == '거절'
-                            ? Colors.white
-                            : const Color(0xFF878787))),
+                            ? const Color(0xFF888888)
+                            : Colors.white)),
               ),
             ],
           ),
