@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../individuals/individual_popup.dart';
 import '../companies/company_popup.dart';
-import '../registration/registration_selection_page.dart';
+import '../new_register/registration_selection_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override

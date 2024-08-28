@@ -316,7 +316,10 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ApplyPage1(audition: audition),
+                  builder: (context) => ApplyPage1(
+                    audition: audition,
+                    company: Company(),
+                  ),
                 ),
               );
             },
