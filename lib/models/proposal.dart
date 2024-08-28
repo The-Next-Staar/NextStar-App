@@ -5,26 +5,26 @@ enum ProposalStatus { pending, approved, rejected }
 
 class Proposal {
   final String id;
-  final Company? company;
+  final Company company;
+  final Trainee trainee;
   final String message;
   final DateTime date;
   final DateTime deadline;
   final String contactPerson;
   final String contactEmail;
   final String contactPhone;
-  final Trainee? trainee;
   ProposalStatus status;
 
   Proposal({
     required this.id,
     required this.company,
+    required this.trainee,
     required this.message,
     required this.date,
     required this.deadline,
     required this.contactPerson,
     required this.contactEmail,
     required this.contactPhone,
-    required this.trainee,
     this.status = ProposalStatus.pending,
   });
 
@@ -46,8 +46,8 @@ List<Proposal> generateSampleProposals() {
   List<Proposal> proposals = [];
 
   void addProposal(
-    Company? company,
-    Trainee? trainee, {
+    Company company,
+    Trainee trainee, {
     required String id,
     required String message,
     required DateTime date,
@@ -57,27 +57,29 @@ List<Proposal> generateSampleProposals() {
     required String contactPhone,
     ProposalStatus status = ProposalStatus.pending,
   }) {
-    if (company != null && trainee != null) {
-      proposals.add(Proposal(
-        id: id,
-        company: company,
-        message: message,
-        date: date,
-        deadline: deadline,
-        contactPerson: contactPerson,
-        contactEmail: contactEmail,
-        contactPhone: contactPhone,
-        trainee: trainee,
-        status: status,
-      ));
-    }
+    proposals.add(Proposal(
+      id: id,
+      company: company,
+      trainee: trainee,
+      message: message,
+      date: date,
+      deadline: deadline,
+      contactPerson: contactPerson,
+      contactEmail: contactEmail,
+      contactPhone: contactPhone,
+      status: status,
+    ));
   }
 
+  Company jypEntertainment =
+      sampleCompanies.firstWhere((c) => c.company == 'JYP Entertainment');
+
   addProposal(
-    sampleCompanies.firstWhere((c) => c.company == 'JYP Entertainment'),
-    trainees.isNotEmpty ? trainees[0] : null,
+    jypEntertainment,
+    trainees[0],
     id: '1',
-    message: '안녕하세요, JYP 캐스팅 담당자입니다. 팜하니님의 춤 실력이 인상적이어서 제안 드립니다.',
+    message:
+        '안녕하세요, ${trainees[0].name}님. JYP Entertainment에서 당신의 재능에 깊은 인상을 받아 연락드립니다. 오디션에 참여해 주시겠습니까?',
     date: DateTime(2024, 8, 18),
     deadline: DateTime(2024, 8, 25),
     contactPerson: '김캐스팅',
@@ -86,52 +88,56 @@ List<Proposal> generateSampleProposals() {
   );
 
   addProposal(
-    sampleCompanies.firstWhere((c) => c.company == 'SM Entertainment'),
-    trainees.length > 1 ? trainees[1] : null,
+    jypEntertainment,
+    trainees[1],
     id: '2',
-    message: '안녕하세요! SM 캐스팅 센터입니다. 당신의 재능에 관심이 있습니다.',
-    date: DateTime(2024, 8, 18),
+    message:
+        '${trainees[1].name}님, JYP Entertainment입니다. 당신의 춤 실력이 인상적이었습니다. 우리와 함께 꿈을 키워나가지 않으시겠습니까?',
+    date: DateTime(2024, 8, 19),
     deadline: DateTime(2024, 9, 1),
-    contactPerson: '이매니저',
-    contactEmail: 'casting@sm.com',
+    contactPerson: '박매니저',
+    contactEmail: 'casting2@jyp.com',
     contactPhone: '010-1111-1111',
   );
 
   addProposal(
-    sampleCompanies.firstWhere((c) => c.company == 'YG Entertainment'),
-    trainees.length > 2 ? trainees[2] : null,
+    jypEntertainment,
+    trainees[2],
     id: '3',
-    message: '안녕하세요, YG 캐스팅 센터입니다. 오디션에 참여해 보시겠어요?',
+    message:
+        '안녕하세요, ${trainees[2].name}님. JYP Entertainment 캐스팅 팀입니다. 귀하의 보컬 능력이 우수하다고 판단되어 연락드립니다.',
     date: DateTime(2024, 8, 15),
     deadline: DateTime(2024, 8, 30),
-    contactPerson: '박디렉터',
-    contactEmail: 'casting@yg.com',
+    contactPerson: '이디렉터',
+    contactEmail: 'casting3@jyp.com',
     contactPhone: '010-2222-2222',
     status: ProposalStatus.rejected,
   );
 
   addProposal(
-    sampleCompanies.firstWhere((c) => c.company == 'Big Hit Entertainment'),
-    trainees.length > 3 ? trainees[3] : null,
+    jypEntertainment,
+    trainees[3],
     id: '4',
-    message: '안녕하세요, Big Hit에서 당신의 가능성을 높이 평가하여 연락드립니다.',
+    message:
+        '${trainees[3].name}님, JYP Entertainment에서 연락드립니다. 당신의 재능을 더욱 발전시킬 수 있는 기회를 제공하고 싶습니다.',
     date: DateTime(2024, 8, 10),
     deadline: DateTime(2024, 8, 24),
     contactPerson: '정프로듀서',
-    contactEmail: 'casting@bighit.com',
+    contactEmail: 'casting4@jyp.com',
     contactPhone: '010-3333-3333',
     status: ProposalStatus.approved,
   );
 
   addProposal(
-    sampleCompanies.firstWhere((c) => c.company == 'Cube Entertainment'),
-    trainees.length > 1 ? trainees[1] : null,
+    jypEntertainment,
+    trainees[4],
     id: '5',
-    message: '안녕하세요, Cube Entertainment입니다. 함께 일할 기회를 드리고 싶습니다.',
+    message:
+        '안녕하세요, ${trainees[4].name}님. JYP Entertainment입니다. 당신의 끼와 재능이 돋보여 연락드립니다. 함께 성장할 기회를 갖고 싶습니다.',
     date: DateTime(2024, 8, 12),
     deadline: DateTime(2024, 8, 27),
     contactPerson: '최매니저',
-    contactEmail: 'casting@cube.com',
+    contactEmail: 'casting5@jyp.com',
     contactPhone: '010-4444-4444',
   );
 
