@@ -232,12 +232,15 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
             const Text('현재 진행 중인 오디션이 없습니다.',
                 style: TextStyle(fontSize: 16, color: Colors.grey))
           else
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: widget.company.currentAuditions
-                    .map((audition) => _buildAuditionCard(audition))
-                    .toList(),
+            SizedBox(
+              height: 136,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.company.currentAuditions.length,
+                itemBuilder: (context, index) {
+                  return _buildAuditionCard(
+                      widget.company.currentAuditions[index]);
+                },
               ),
             ),
         ],

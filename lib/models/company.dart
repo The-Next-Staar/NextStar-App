@@ -82,20 +82,6 @@ class Company {
   }
 }
 
-class Audition {
-  final String title;
-  final String deadline;
-  final Company company;
-  bool isFavorite;
-
-  Audition({
-    required this.title,
-    required this.deadline,
-    required this.company,
-    this.isFavorite = false,
-  });
-}
-
 List<Company> sampleCompanies = [
   Company(
     company: 'JYP Entertainment',
@@ -214,40 +200,65 @@ List<Company> sampleCompanies = [
   ),
 ];
 
-void initializeAuditions() {
-  sampleCompanies[0].currentAuditions.addAll([
-    Audition(
-        title: '24년 상반기 오디션 (여자)',
-        deadline: '24.08.20',
-        company: sampleCompanies[0]),
-    Audition(
-        title: '24년 상반기 오디션 (남자)',
-        deadline: '24.08.20',
-        company: sampleCompanies[0]),
-  ]);
+class Audition {
+  final String title;
+  final String deadline;
+  final Company company;
+  bool isFavorite;
 
-  sampleCompanies[1].currentAuditions.add(
-        Audition(
-            title: '24년 하반기 오디션 (여자)',
-            deadline: '24.12.20',
-            company: sampleCompanies[1]),
-      );
+  Audition({
+    required this.title,
+    required this.deadline,
+    required this.company,
+    this.isFavorite = false,
+  });
 
-  sampleCompanies[2].currentAuditions.add(
-        Audition(
-            title: '24년 프로듀서 오디션',
-            deadline: '24.09.10',
-            company: sampleCompanies[2]),
-      );
-
-  sampleCompanies[3].currentAuditions.add(
-        Audition(
-            title: '24년 글로벌 오디션',
-            deadline: '24.09.15',
-            company: sampleCompanies[3]),
-      );
+  Audition.empty()
+      : title = '',
+        deadline = '',
+        company = Company.empty(),
+        isFavorite = false;
 }
 
-void initializeCompanyData() {
-  initializeAuditions();
+void initializeAuditions() {
+  sampleCompanies[0].currentAuditions = [
+    Audition(
+      title: '24년 상반기 오디션 (여자)',
+      deadline: '24.08.20',
+      company: sampleCompanies[0],
+    ),
+    Audition(
+      title: '24년 상반기 오디션 (남자)',
+      deadline: '24.08.20',
+      company: sampleCompanies[0],
+    ),
+  ];
+
+  sampleCompanies[1].currentAuditions = [
+    Audition(
+      title: '24년 하반기 오디션 (여자)',
+      deadline: '24.12.20',
+      company: sampleCompanies[1],
+    ),
+  ];
+
+  sampleCompanies[2].currentAuditions = [
+    Audition(
+      title: '24년 프로듀서 오디션',
+      deadline: '24.09.10',
+      company: sampleCompanies[2],
+    ),
+  ];
+
+  sampleCompanies[3].currentAuditions = [
+    Audition(
+      title: '24년 글로벌 오디션',
+      deadline: '24.09.15',
+      company: sampleCompanies[3],
+    ),
+  ];
+
+  for (int i = 4; i < sampleCompanies.length; i++) {
+    sampleCompanies[i].currentAuditions = [];
+  }
 }
