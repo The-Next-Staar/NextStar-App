@@ -140,15 +140,6 @@ class _AuditionRegisterPageState extends State<AuditionRegisterPage> {
               ],
             ),
           ),
-          const Positioned(
-            right: 20,
-            top: 20,
-            child: Text(
-              '상세보기',
-              style: TextStyle(
-                  color: Colors.white, fontSize: 14, fontFamily: 'Pretendard'),
-            ),
-          ),
         ],
       ),
     );

@@ -13,7 +13,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  String _searchQuery = '';
+  final List<String> _searchQueries = [];
 
   late final List<Widget> _pages;
 
@@ -22,7 +22,7 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     _pages = [
       SearchPage(onSearch: _handleSearch),
-      SearchResultsPage(searchQuery: _searchQuery),
+      SearchResultsPage(initialSearchQueries: _searchQueries),
       const ProposalManagementPage(),
       const MyPage(),
     ];
@@ -30,9 +30,11 @@ class _MainPageState extends State<MainPage> {
 
   void _handleSearch(String query) {
     setState(() {
-      _searchQuery = query;
+      if (!_searchQueries.contains(query)) {
+        _searchQueries.add(query);
+      }
       _selectedIndex = 1;
-      _pages[1] = SearchResultsPage(searchQuery: _searchQuery);
+      _pages[1] = SearchResultsPage(initialSearchQueries: _searchQueries);
     });
   }
 
@@ -120,8 +122,8 @@ class _MainPageState extends State<MainPage> {
         setState(() {
           _selectedIndex = index;
           if (index == 0) {
-            _searchQuery = '';
-            _pages[1] = SearchResultsPage(searchQuery: _searchQuery);
+            _searchQueries.clear();
+            _pages[1] = SearchResultsPage(initialSearchQueries: _searchQueries);
           }
         });
       },

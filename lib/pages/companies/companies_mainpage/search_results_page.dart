@@ -3,9 +3,9 @@ import '../../../models/trainee.dart';
 import '../trainee_info_page.dart';
 
 class SearchResultsPage extends StatefulWidget {
-  final String searchQuery;
+  final List<String> initialSearchQueries;
 
-  const SearchResultsPage({Key? key, required this.searchQuery})
+  const SearchResultsPage({Key? key, required this.initialSearchQueries})
       : super(key: key);
 
   @override
@@ -16,11 +16,13 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   List<Trainee> _searchResults = [];
   String _selectedFilter = '전체';
   late TextEditingController _searchController;
+  List<String> _searchTags = [];
 
   @override
   void initState() {
     super.initState();
-    _searchController = TextEditingController(text: widget.searchQuery);
+    _searchController = TextEditingController();
+    _searchTags = List.from(widget.initialSearchQueries);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _performSearch();
     });
@@ -34,10 +36,10 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
   void _performSearch() {
     setState(() {
-      _searchResults = trainees
-          .where((trainee) =>
-              trainee.traits.contains(_searchController.text.toLowerCase()))
-          .toList();
+      _searchResults = trainees.where((trainee) {
+        return _searchTags.every((tag) => trainee.traits
+            .any((trait) => trait.toLowerCase().contains(tag.toLowerCase())));
+      }).toList();
 
       if (_selectedFilter != '전체') {
         _searchResults = _searchResults
@@ -45,6 +47,23 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
             .toList();
       }
     });
+  }
+
+  void _addSearchTag(String tag) {
+    if (tag.isNotEmpty && !_searchTags.contains(tag)) {
+      setState(() {
+        _searchTags.add(tag);
+        _searchController.clear();
+      });
+      _performSearch();
+    }
+  }
+
+  void _removeSearchTag(String tag) {
+    setState(() {
+      _searchTags.remove(tag);
+    });
+    _performSearch();
   }
 
   @override
@@ -57,7 +76,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           children: [
             _SearchFormResults(
               searchController: _searchController,
-              onSearch: _performSearch,
+              onSearch: () => _addSearchTag(_searchController.text),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -80,20 +99,21 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
               ],
             ),
             const SizedBox(height: 15),
-            Row(
-              children: [
-                _buildHashtagBlock(_searchController.text),
-                const SizedBox(width: 5),
-                Text(
-                  '에 해당하는 지원자 ${_searchResults.length}명',
-                  style: const TextStyle(
-                    color: Color(0xFF434343),
-                    fontSize: 14,
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children:
+                  _searchTags.map((tag) => _buildHashtagBlock(tag)).toList(),
+            ),
+            const SizedBox(height: 15),
+            Text(
+              '에 해당하는 지원자 ${_searchResults.length}명',
+              style: const TextStyle(
+                color: Color(0xFF434343),
+                fontSize: 14,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: 15),
             GridView.builder(
@@ -168,18 +188,21 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
             ),
           ),
           const SizedBox(width: 8),
-          Container(
-            width: 14,
-            height: 14,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.close,
-                size: 10,
-                color: Color(0xFFA139B2),
+          GestureDetector(
+            onTap: () => _removeSearchTag(tag),
+            child: Container(
+              width: 14,
+              height: 14,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.close,
+                  size: 10,
+                  color: Color(0xFFA139B2),
+                ),
               ),
             ),
           ),
@@ -200,7 +223,6 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
       },
       child: Container(
         width: 165,
-        height: 229,
         decoration: BoxDecoration(
           border: Border.all(color: const Color(0xFFD9D9D9)),
           borderRadius: BorderRadius.circular(6),
@@ -208,18 +230,20 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 165,
-              decoration: BoxDecoration(
-                color: const Color(0xFFBBBBBB),
-                image: DecorationImage(
-                  image: AssetImage(trainee.imageUrl),
-                  fit: BoxFit.cover,
+            AspectRatio(
+              aspectRatio: 1, // This will make the image square
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFBBBBBB),
+                  image: DecorationImage(
+                    image: AssetImage(trainee.imageUrl),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -227,20 +251,24 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                     trainee.name,
                     style: const TextStyle(
                       color: Color(0xFF434343),
-                      fontSize: 16,
+                      fontSize: 14,
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w700,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 2),
                   Text(
                     '만 ${trainee.age}세(${trainee.birthYear}년 생)',
                     style: const TextStyle(
                       color: Color(0xFF434343),
-                      fontSize: 13,
+                      fontSize: 12,
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -297,6 +325,7 @@ class _SearchFormResults extends StatelessWidget {
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(horizontal: 20),
                       ),
+                      onSubmitted: (_) => onSearch(),
                     ),
                   ),
                   IconButton(

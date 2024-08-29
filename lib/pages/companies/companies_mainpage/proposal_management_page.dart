@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../models/casting.dart';
 import '../../../models/proposal.dart';
+import '../message/message.dart';
 import '../trainee_info_page.dart';
 
 class ProposalManagementPage extends StatefulWidget {
@@ -408,15 +410,51 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
                   borderRadius: BorderRadius.circular(6)),
             ),
             child: Center(
-              child: Text(
-                _getStatusText(proposal.status),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              child: proposal.status == ProposalStatus.approved
+                  ? ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MessagePage(
+                              casting: Casting(
+                                trainee: proposal.trainee,
+                                company: proposal.company!,
+                                message: '',
+                                date: DateTime.now().toString(),
+                                contactPerson: '',
+                                contactEmail: '',
+                                contactPhone: '',
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFEF69A6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      child: const Text(
+                        '메시지 함으로 이동하기',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    )
+                  : Text(
+                      _getStatusText(proposal.status),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
             ),
           ),
         ],
