@@ -379,7 +379,7 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
               style:
                   const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 5),
-          Text('마감일: ${casting.deadline}',
+          Text('마감일: ${casting.daysUntilDeadline}',
               style: const TextStyle(fontSize: 14, color: Colors.grey)),
           const SizedBox(height: 5),
           Text('담당자: ${casting.contactPerson}',

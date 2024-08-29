@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/casting.dart';
 import 'company_detail_page.dart';
+import 'message/message.dart';
 
 class ProposalPage extends StatefulWidget {
   final Casting casting;
@@ -12,6 +13,8 @@ class ProposalPage extends StatefulWidget {
 }
 
 class _ProposalPageState extends State<ProposalPage> {
+  bool isApproved = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,10 +31,13 @@ class _ProposalPageState extends State<ProposalPage> {
                   const SizedBox(height: 20),
                   _buildCompanyInfo(),
                   const SizedBox(height: 20),
-                  if (widget.casting.status == CastingStatus.pending) ...[
+                  if (!isApproved &&
+                      widget.casting.status == CastingStatus.pending) ...[
                     _buildApproveButton(context),
                     const SizedBox(height: 10),
                     _buildRejectButton(context),
+                  ] else if (isApproved) ...[
+                    _buildMessageButton(context),
                   ],
                 ],
               ),
@@ -248,25 +254,48 @@ class _ProposalPageState extends State<ProposalPage> {
   }
 
   Widget _buildApproveButton(BuildContext context) {
-    return Positioned(
-      left: 20,
-      top: 676,
-      child: SizedBox(
-        width: 350,
-        height: 44,
-        child: ElevatedButton(
-          onPressed: () {
+    return SizedBox(
+      width: 350,
+      height: 44,
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
             widget.casting.approve();
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFEF69A6),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
-            ),
+            isApproved = true;
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFEF69A6),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
           ),
-          child: const Text('승인하기', style: TextStyle(color: Colors.white)),
         ),
+        child: const Text('승인하기', style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  Widget _buildMessageButton(BuildContext context) {
+    return SizedBox(
+      width: 350,
+      height: 44,
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MessagePage(casting: widget.casting),
+            ),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFEF69A6),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
+        child:
+            const Text('메시지 함으로 이동하기', style: TextStyle(color: Colors.white)),
       ),
     );
   }
