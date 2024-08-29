@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../viewprofile_page.dart';
+
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
 
@@ -10,7 +12,7 @@ class MyPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProfileSection(),
+            Center(child: _buildProfileSection(context)),
             _buildSectionTitle('내 프로필 관리'),
             _buildListItem('내 프로필 열람 기업 (20곳)'),
             _buildListItem('프로필 수정하기'),
@@ -26,45 +28,136 @@ class MyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileSection() {
+  Widget _buildProfileSection(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 20, top: 40, bottom: 20, right: 20),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF878787)),
-        borderRadius: BorderRadius.circular(8),
+      width: 360,
+      margin: const EdgeInsets.only(top: 20),
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '나의 프로필',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF434343),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, top: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 95,
+                  height: 12.65,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                          "assets/images/the_next_star_pink_logo_line.png"),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 3),
+                const Text(
+                  '프로필',
+                  style: TextStyle(
+                    color: Color(0xFFF273AE),
+                    fontSize: 12,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Container(
-                width: 107,
-                height: 134,
-                color: const Color(0xFFD9D9D9),
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7.45),
+                    image: const DecorationImage(
+                      image: AssetImage("assets/images/profile_image.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow('이름:', '팜하니(Hanni Pham)'),
+                      _buildInfoRow('성별:', '여자'),
+                      _buildInfoRow('생년월일:', '2006/07/02'),
+                      _buildInfoRow('스펙:', '163cm/43kg'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16, bottom: 16),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ViewProfilePage()),
+                  );
+                },
+                child: const Text(
+                  '상세보기',
+                  style: TextStyle(
+                    color: Color(0xFFCBCBCB),
+                    fontSize: 12,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-              const SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('이름:', style: _profileTextStyle()),
-                  const SizedBox(height: 10),
-                  Text('나이:', style: _profileTextStyle()),
-                  const SizedBox(height: 10),
-                  Text('스펙:', style: _profileTextStyle()),
-                ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 70,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFF434343),
+                fontSize: 14,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w700,
               ),
-            ],
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Color(0xFF434343),
+                fontSize: 14,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
           ),
         ],
       ),

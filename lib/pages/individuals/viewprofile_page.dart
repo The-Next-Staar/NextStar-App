@@ -1,56 +1,28 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'individuals_mainpage/main_page.dart';
 
-class ProfileCreatePage extends StatefulWidget {
-  @override
-  _ProfileCreatePageState createState() => _ProfileCreatePageState();
-}
-
-class _ProfileCreatePageState extends State<ProfileCreatePage> {
-  File? _image;
-  final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _heightController = TextEditingController();
-  final TextEditingController _weightController = TextEditingController();
-
-  Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-    }
-  }
-
+class ViewProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildProfileImage(),
-                      const SizedBox(height: 20),
-                      _buildNameField(),
-                      const SizedBox(height: 20),
-                      _buildAgeField(),
-                      const SizedBox(height: 20),
-                      _buildSpecsField(),
-                      _buildSubmitButton(context),
-                    ],
-                  ),
+            _buildHeader(context),
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildProfileImage(),
+                    const SizedBox(height: 20),
+                    _buildNameField(),
+                    const SizedBox(height: 20),
+                    _buildAgeField(),
+                    const SizedBox(height: 20),
+                    _buildSpecsField(),
+                    _buildSubmitButton(context),
+                  ],
                 ),
               ),
             ),
@@ -60,20 +32,29 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
-          Image.asset(
-            'assets/images/the_next_star_logo_line.png',
-            width: 200,
-            height: 60,
-            fit: BoxFit.contain,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Color(0xFF434343)),
+                onPressed: () => Navigator.pop(context),
+              ),
+              Image.asset(
+                'assets/images/the_next_star_logo_line.png',
+                width: 200,
+                fit: BoxFit.fill,
+              ),
+              const SizedBox(width: 48),
+            ],
           ),
           const SizedBox(height: 10),
           const Text(
-            '내 프로필 만들기',
+            '내 프로필 보기',
             style: TextStyle(
               color: Color(0xFF434343),
               fontSize: 18,
@@ -88,24 +69,15 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
 
   Widget _buildProfileImage() {
     return Center(
-      child: GestureDetector(
-        onTap: _pickImage,
-        child: Container(
-          width: 161,
-          height: 161,
-          decoration: BoxDecoration(
-            color: const Color(0xFFD9D9D9),
-            borderRadius: BorderRadius.circular(10),
-            image: _image != null
-                ? DecorationImage(
-                    image: FileImage(_image!),
-                    fit: BoxFit.cover,
-                  )
-                : null,
+      child: Container(
+        width: 161,
+        height: 161,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          image: DecorationImage(
+            image: AssetImage('assets/images/profile_image.png'),
+            fit: BoxFit.cover,
           ),
-          child: _image == null
-              ? const Icon(Icons.camera_alt, size: 50, color: Colors.white)
-              : null,
         ),
       ),
     );
@@ -133,8 +105,7 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
           ),
           child: const TextField(
             decoration: InputDecoration(
-              hintText: '이름을 입력하세요.',
-              hintStyle: TextStyle(color: Color(0xFFCBCBCB)),
+              hintText: '팜하니(Hanni Pham)',
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 20),
             ),
@@ -149,7 +120,7 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '생년월일',
+          '나이',
           style: TextStyle(
             color: Color(0xFF434343),
             fontSize: 18,
@@ -161,33 +132,22 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
         Container(
           height: 45,
           decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFFD9D9D9)),
+            color: const Color(0xFFF4F4F5),
             borderRadius: BorderRadius.circular(6),
-            color: Colors.white,
           ),
-          child: TextField(
-            controller: _dobController,
-            decoration: const InputDecoration(
-              hintText: '2001/01/01',
-              hintStyle: TextStyle(color: Color(0xFFCBCBCB)),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 20),
-            ),
-            keyboardType: TextInputType.datetime,
-            inputFormatters: [
-              TextInputFormatter.withFunction(
-                (oldValue, newValue) {
-                  var text = newValue.text;
-                  if (text.length == 4) {
-                    text += '/';
-                  } else if (text.length == 7) {
-                    text += '/';
-                  }
-                  return newValue.copyWith(
-                      text: text,
-                      selection: TextSelection.collapsed(offset: text.length));
-                },
+          child: const Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    '18세',
+                    style: TextStyle(color: Color(0xFF434343)),
+                  ),
+                ),
               ),
+              Icon(Icons.arrow_drop_down, color: Color(0xFFD9D9D9)),
+              SizedBox(width: 20),
             ],
           ),
         ),
@@ -228,19 +188,23 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
                   Container(
                     height: 45,
                     decoration: BoxDecoration(
-                      border: Border.all(color: const Color(0xFFD9D9D9)),
+                      color: const Color(0xFFF4F4F5),
                       borderRadius: BorderRadius.circular(6),
-                      color: Colors.white,
                     ),
-                    child: TextField(
-                      controller: _heightController,
-                      decoration: const InputDecoration(
-                        hintText: '숫자만 입력',
-                        hintStyle: TextStyle(color: Color(0xFFCBCBCB)),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      ),
-                      keyboardType: TextInputType.number,
+                    child: const Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              '163cm',
+                              style: TextStyle(color: Color(0xFF434343)),
+                            ),
+                          ),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: Color(0xFFD9D9D9)),
+                        SizedBox(width: 20),
+                      ],
                     ),
                   ),
                 ],
@@ -264,19 +228,23 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
                   Container(
                     height: 45,
                     decoration: BoxDecoration(
-                      border: Border.all(color: const Color(0xFFD9D9D9)),
+                      color: const Color(0xFFF4F4F5),
                       borderRadius: BorderRadius.circular(6),
-                      color: Colors.white,
                     ),
-                    child: TextField(
-                      controller: _weightController,
-                      decoration: const InputDecoration(
-                        hintText: '숫자만 입력',
-                        hintStyle: TextStyle(color: Color(0xFFCBCBCB)),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      ),
-                      keyboardType: TextInputType.number,
+                    child: const Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              '43kg',
+                              style: TextStyle(color: Color(0xFF434343)),
+                            ),
+                          ),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: Color(0xFFD9D9D9)),
+                        SizedBox(width: 20),
+                      ],
                     ),
                   ),
                 ],
@@ -290,12 +258,10 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
 
   Widget _buildSubmitButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 30),
+      padding: const EdgeInsets.symmetric(vertical: 27),
       child: ElevatedButton(
         onPressed: () {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()),
-          );
+          Navigator.of(context).pop();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFEF69A6),
@@ -305,7 +271,7 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
           ),
         ),
         child: const Text(
-          '완료하기',
+          '저장하기',
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
