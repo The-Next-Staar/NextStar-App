@@ -104,13 +104,6 @@ class _ApplyPage3State extends State<ApplyPage3> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: const BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            offset: Offset(0, 2),
-            blurRadius: 4,
-          ),
-        ],
       ),
       child: SafeArea(
         child: Row(
@@ -122,7 +115,7 @@ class _ApplyPage3State extends State<ApplyPage3> {
             ),
             Image.asset(
               'assets/images/the_next_star_logo_line.png',
-              width: 120,
+              width: 150,
               height: 36,
               fit: BoxFit.contain,
             ),

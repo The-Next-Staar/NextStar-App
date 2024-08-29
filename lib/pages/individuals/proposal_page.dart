@@ -18,24 +18,22 @@ class _ProposalPageState extends State<ProposalPage> {
       body: Column(
         children: [
           _buildAppBar(context),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildCastingMessage(),
-                    const SizedBox(height: 20),
-                    _buildCompanyInfo(),
-                    const SizedBox(height: 20),
-                    if (widget.casting.status == CastingStatus.pending) ...[
-                      _buildApproveButton(context),
-                      const SizedBox(height: 10),
-                      _buildRejectButton(context),
-                    ],
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildCastingMessage(),
+                  const SizedBox(height: 20),
+                  _buildCompanyInfo(),
+                  const SizedBox(height: 20),
+                  if (widget.casting.status == CastingStatus.pending) ...[
+                    _buildApproveButton(context),
+                    const SizedBox(height: 10),
+                    _buildRejectButton(context),
                   ],
-                ),
+                ],
               ),
             ),
           ),

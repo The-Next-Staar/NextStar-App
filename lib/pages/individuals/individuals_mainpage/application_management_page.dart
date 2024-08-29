@@ -1,5 +1,9 @@
+// ignore_for_file: non_constant_identifier_names, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
+import '../../../models/application.dart';
 import '../../../models/casting.dart';
+import '../applicaiton_page.dart';
 import '../proposal_page.dart';
 
 class ApplicationManagementPage extends StatefulWidget {
@@ -84,21 +88,20 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
     return Padding(
       padding: const EdgeInsets.only(left: 20, top: 20, bottom: 5),
       child: Text(
-        _isAppliedCompanies ? '지원 기업 총 2곳' : '제안한 기업 총 3곳',
+        _isAppliedCompanies ? '지원 기업 총 ${applications.length}곳' : '제안한 기업 총 3곳',
         style: const TextStyle(color: Color(0xFF878787), fontSize: 12),
       ),
     );
   }
 
   Widget _buildAppliedCompaniesList() {
-    return ListView(
+    return ListView.builder(
       padding: EdgeInsets.zero,
-      children: [
-        _buildAppliedCompanyCard('JYP Online Audition',
-            '차세대 스타를 찾고 있습니다.\n지금 그 주인공이 되어보세요.', '2024.08.18', '미열람'),
-        _buildAppliedCompanyCard('JYP Online Audition',
-            '차세대 스타를 찾고 있습니다.\n지금 그 주인공이 되어보세요.', '2024.08.18', '열람'),
-      ],
+      itemCount: applications.length,
+      itemBuilder: (context, index) {
+        final ApplicationInfo = applications[index];
+        return _buildAppliedCompanyCard(context, ApplicationInfo);
+      },
     );
   }
 
@@ -145,50 +148,62 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
   }
 
   Widget _buildAppliedCompanyCard(
-      String title, String description, String date, String status) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFD9D9D9)),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w700)),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF4F4F5),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(status,
-                    style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF878787))),
+      BuildContext context, Application Application) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ApplicationsPage(application: Application),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    Application.companyName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Application.isViewed ? Colors.grey : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    Application.audititionName,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    '모집기간: ${Application.recruitmentPeriod}',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(description,
-              style: const TextStyle(fontSize: 13, color: Color(0xFF434343))),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('지원일: $date',
-                  style:
-                      const TextStyle(fontSize: 13, color: Color(0xFF434343))),
-              const Text('지원 내용 보기',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF878787))),
-            ],
-          ),
-        ],
+            ),
+            const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+          ],
+        ),
       ),
     );
   }

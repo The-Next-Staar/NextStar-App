@@ -171,7 +171,9 @@ class _CompanyListPageState extends State<CompanyListPage> {
       },
       child: Icon(
         favorites.contains(company.company) ? Icons.star : Icons.star_border,
-        color: const Color(0xFF878787),
+        color: favorites.contains(company.company)
+            ? Colors.yellow
+            : const Color(0xFF888888),
       ),
     );
   }
