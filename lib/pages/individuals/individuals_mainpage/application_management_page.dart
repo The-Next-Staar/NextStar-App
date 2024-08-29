@@ -13,20 +13,20 @@ class ApplicationManagementPage extends StatefulWidget {
 }
 
 class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
-  bool _isAppliedCompanies = false;
+  bool _isAppliedCompanies = true;
   String _castingFilter = '전체';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
+    return Container(
+      color: Colors.white,
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
           _buildToggleButtons(),
           _buildCompanyCount(),
           if (!_isAppliedCompanies) _buildCastingFilter(),
+          const SizedBox(height: 20),
           Expanded(
             child: _isAppliedCompanies
                 ? _buildAppliedCompaniesList()
@@ -39,7 +39,6 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
 
   Widget _buildToggleButtons() {
     return Container(
-      width: double.infinity,
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Color(0xFFD9D9D9))),
       ),
@@ -78,7 +77,6 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
                   : const Color(0xFF878787),
               fontSize: 16,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-              height: 1.2,
             ),
           ),
         ),
@@ -87,214 +85,220 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
   }
 
   Widget _buildCompanyCount() {
-    final unreadCount =
-        sampleCastings.where((casting) => !casting.isRead).length;
+    final count =
+        _isAppliedCompanies ? applications.length : sampleCastings.length;
+    final unreadCount = _isAppliedCompanies
+        ? applications.where((app) => !app.isViewed).length
+        : sampleCastings.where((casting) => !casting.isRead).length;
+
     return Padding(
-      padding: const EdgeInsets.only(left: 20, top: 20, bottom: 5),
+      padding: const EdgeInsets.only(left: 20, top: 20, bottom: 10),
       child: Text(
         _isAppliedCompanies
-            ? '지원 기업 총 ${applications.length}곳'
-            : '제안한 기업 총 ${sampleCastings.length}곳 (안읽은 제안 $unreadCount곳)',
+            ? '지원 기업 총 $count곳 (미열람 제안 $unreadCount곳)'
+            : '제안한 기업 총 $count곳 (안읽은 제안 $unreadCount곳)',
         style: const TextStyle(
           color: Color(0xFF878787),
           fontSize: 12,
-          height: 1.5,
         ),
       ),
     );
   }
 
   Widget _buildCastingFilter() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildFilterChip('전체'),
-          const SizedBox(width: 10),
-          _buildFilterChip('승인'),
-          const SizedBox(width: 10),
-          _buildFilterChip('거절'),
-          const SizedBox(width: 10),
-          _buildFilterChip('대기중'),
+          _buildFilterButton('전체'),
+          const SizedBox(width: 8),
+          _buildFilterButton('승인'),
+          const SizedBox(width: 8),
+          _buildFilterButton('거절'),
+          const SizedBox(width: 8),
+          _buildFilterButton('대기중'),
         ],
       ),
     );
   }
 
-  Widget _buildFilterChip(String label) {
+  Widget _buildFilterButton(String label) {
     final isSelected = _castingFilter == label;
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (bool selected) {
-        setState(() {
-          _castingFilter = selected ? label : '전체';
-        });
-      },
-      selectedColor: const Color(0xFFEF69A6).withOpacity(0.1),
-      backgroundColor: Colors.white,
-      labelStyle: TextStyle(
-        color: isSelected ? const Color(0xFFEF69A6) : const Color(0xFF878787),
-        fontWeight: FontWeight.w600,
-        fontSize: 14,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: isSelected ? const Color(0xFFEF69A6) : const Color(0xFF878787),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: ShapeDecoration(
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 1,
+            color:
+                isSelected ? const Color(0xFFEF69A6) : const Color(0x3870737C),
+          ),
+          borderRadius: BorderRadius.circular(4),
         ),
+      ),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _castingFilter = label;
+          });
+        },
+        child: Center(
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected
+                  ? const Color(0xFFED72C6)
+                  : const Color(0xFF878787),
+              fontSize: 14,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+              letterSpacing: 0.35,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompanyCard({
+    required String title,
+    required String subtitle,
+    required String date,
+    required String status,
+    required VoidCallback onViewDetails,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(16),
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+          borderRadius: BorderRadius.circular(6),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Color(0xFF434343),
+                  fontSize: 18,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              _buildStatusChip(status),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subtitle,
+            style: const TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 13,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                date,
+                style: const TextStyle(
+                  color: Color(0xFF878787),
+                  fontSize: 13,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              GestureDetector(
+                onTap: onViewDetails,
+                child: const Text(
+                  '제안 내용 보기',
+                  style: TextStyle(
+                    color: Color(0xFF878787),
+                    fontSize: 13,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildAppliedCompaniesList() {
     return ListView.builder(
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: applications.length,
       itemBuilder: (context, index) {
         final application = applications[index];
-        return _buildAppliedCompanyCard(context, application);
+        return _buildCompanyCard(
+          title: application.companyName,
+          subtitle: application.audititionName,
+          date: application.recruitmentPeriod,
+          status: application.isViewed ? '열람' : '미열람',
+          onViewDetails: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    ApplicationsPage(application: application),
+              ),
+            ).then((_) {
+              setState(() {
+                application.isViewed = true;
+              });
+            });
+          },
+        );
       },
     );
   }
 
   Widget _buildCastingCompaniesList() {
-    List<Casting> filteredCastings = sampleCastings;
-    if (_castingFilter != '전체') {
-      filteredCastings = sampleCastings.where((casting) {
-        switch (_castingFilter) {
-          case '승인':
-            return casting.status == CastingStatus.approved;
-          case '거절':
-            return casting.status == CastingStatus.rejected;
-          case '대기중':
-            return casting.status == CastingStatus.pending;
-          default:
-            return true;
-        }
-      }).toList();
-    }
+    List<Casting> unreadCastings =
+        sampleCastings.where((casting) => !casting.isRead).toList();
 
-    final unreadCastings =
-        filteredCastings.where((casting) => !casting.isRead).toList();
-    final readCastings =
-        filteredCastings.where((casting) => casting.isRead).toList();
+    List<Casting> readCastings =
+        sampleCastings.where((casting) => casting.isRead).toList();
 
     return ListView(
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       children: [
         if (unreadCastings.isNotEmpty) ...[
-          _buildSectionTitle('최근 제안'),
-          ...unreadCastings.map((casting) => _buildCastingCompanyCard(casting)),
-        ],
-        if (readCastings.isNotEmpty) ...[
-          _buildSectionTitle('내가 이미 확인한 제안'),
-          ...readCastings.map((casting) => _buildCastingCompanyCard(casting)),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, top: 20, bottom: 10),
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Color(0xFF434343),
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          height: 1.2,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAppliedCompanyCard(
-      BuildContext context, Application application) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: Color(0xFFD9D9D9)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  application.companyName,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                _buildViewStatusChip(application.isViewed),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(application.audititionName),
-            const SizedBox(height: 5),
-            Text('모집기간: ${application.recruitmentPeriod}'),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ApplicationsPage(application: application),
-                    ),
-                  );
-                },
-                child: const Text('지원 상세보기'),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              '최근 제안',
+              style: TextStyle(
+                color: Color(0xFF434343),
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCastingCompanyCard(Casting casting) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: Color(0xFFD9D9D9)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  casting.company.company,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                _buildCastingStatusChip(casting),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(casting.message),
-            const SizedBox(height: 5),
-            Text(
-              casting.date,
-              style: const TextStyle(color: Color(0xFF878787), fontSize: 13),
-            ),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
+          ),
+          ...unreadCastings.map((casting) => _buildCompanyCard(
+                title: casting.company.company,
+                subtitle: casting.message,
+                date: casting.date,
+                status: _getCastingStatusText(casting.status),
+                onViewDetails: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -306,65 +310,98 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
                     });
                   });
                 },
-                child: const Text('제안 내용 보기'),
+              )),
+          const SizedBox(height: 20),
+        ],
+        if (readCastings.isNotEmpty) ...[
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              '내가 이미 확인한 제안',
+              style: TextStyle(
+                color: Color(0xFF434343),
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+          ...readCastings.map((casting) => _buildCompanyCard(
+                title: casting.company.company,
+                subtitle: casting.message,
+                date: casting.date,
+                status: _getCastingStatusText(casting.status),
+                onViewDetails: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProposalPage(casting: casting),
+                    ),
+                  ).then((_) {
+                    setState(() {
+                      casting.markAsRead();
+                    });
+                  });
+                },
+              )),
+        ],
+      ],
     );
   }
 
-  Widget _buildViewStatusChip(bool isViewed) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: isViewed ? const Color(0xFFEF69A6) : const Color(0xFF878787),
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        isViewed ? '열람' : '미열람',
-        style: TextStyle(
-          color: isViewed ? const Color(0xFFEF69A6) : const Color(0xFF878787),
-          fontSize: 12,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCastingStatusChip(Casting casting) {
+  Widget _buildStatusChip(String status) {
     Color color;
-    String text;
-
-    switch (casting.status) {
-      case CastingStatus.pending:
-        color = Colors.orange;
-        text = '대기중';
-        break;
-      case CastingStatus.approved:
+    Color textColor;
+    switch (status) {
+      case '승인':
         color = const Color(0xFFEF69A6);
-        text = '승인';
+        textColor = Colors.white;
         break;
-      case CastingStatus.rejected:
+      case '거절':
         color = const Color(0xFF878787);
-        text = '거절';
+        textColor = Colors.white;
         break;
+      case '대기중':
+        color = Colors.orange;
+        textColor = Colors.white;
+        break;
+      case '열람':
+        color = const Color(0xFFEF69A6).withOpacity(0.1);
+        textColor = const Color(0xFFEF69A6);
+        break;
+      case '미열람':
+        color = const Color(0xFF878787).withOpacity(0.1);
+        textColor = const Color(0xFF878787);
+        break;
+      default:
+        color = const Color(0xFF878787).withOpacity(0.1);
+        textColor = const Color(0xFF878787);
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        border: Border.all(color: color),
+        color: color,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        text,
-        style:
-            TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600),
+        status,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
+  }
+
+  String _getCastingStatusText(CastingStatus status) {
+    switch (status) {
+      case CastingStatus.approved:
+        return '승인';
+      case CastingStatus.rejected:
+        return '거절';
+      case CastingStatus.pending:
+        return '대기중';
+    }
   }
 }

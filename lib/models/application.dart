@@ -11,7 +11,7 @@ class Application {
   final String address;
   final String phone;
   final String email;
-  final bool isViewed;
+  bool isViewed;
 
   Application({
     required this.companyName,
