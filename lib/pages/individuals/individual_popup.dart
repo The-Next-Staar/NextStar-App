@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nextstar_app/pages/individuals/create_profile.dart';
+import 'create_profile.dart';
 
 class IndividualPopupPage extends StatelessWidget {
   final Color tnsMainPink = const Color(0xFFEF69A6);

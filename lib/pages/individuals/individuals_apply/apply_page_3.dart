@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nextstar_app/pages/individuals/individuals_mainpage/main_page.dart';
+import '../individuals_mainpage/main_page.dart';
 import 'dart:io';
 import '../../../models/company.dart';
 

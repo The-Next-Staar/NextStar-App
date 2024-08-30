@@ -1,4 +1,4 @@
-package com.example.nextstar_app
+package com.nextstar.app
 
 import io.flutter.embedding.android.FlutterActivity
 
