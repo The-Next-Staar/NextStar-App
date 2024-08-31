@@ -30,8 +30,8 @@ class MyPage extends StatelessWidget {
 
   Widget _buildProfileSection(BuildContext context) {
     return Container(
-      width: 360,
-      margin: const EdgeInsets.only(top: 20),
+      width: double.infinity,
+      margin: const EdgeInsets.all(15),
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(

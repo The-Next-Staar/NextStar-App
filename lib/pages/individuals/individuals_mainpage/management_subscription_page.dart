@@ -1,7 +1,36 @@
 import 'package:flutter/material.dart';
 
-class SubscriptionPage extends StatelessWidget {
+class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({super.key});
+
+  @override
+  _SubscriptionPageState createState() => _SubscriptionPageState();
+}
+
+class _SubscriptionPageState extends State<SubscriptionPage> {
+  final List<bool> _featureAnimations = [false, false, false];
+  bool _buttonAnimation = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startAnimations();
+  }
+
+  void _startAnimations() {
+    Future.delayed(const Duration(milliseconds: 300), () {
+      setState(() => _featureAnimations[0] = true);
+    });
+    Future.delayed(const Duration(milliseconds: 600), () {
+      setState(() => _featureAnimations[1] = true);
+    });
+    Future.delayed(const Duration(milliseconds: 900), () {
+      setState(() => _featureAnimations[2] = true);
+    });
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      setState(() => _buttonAnimation = true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,14 +83,16 @@ class SubscriptionPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-              _buildFeatureItem(
-                  '1', '연습 일지 및 평가', '노래와 영상을 업로드하고, 평가서로 기록해봐요!'),
+              _buildAnimatedFeatureItem(
+                  0, '1', '연습 일지 및 평가', '노래와 영상을 업로드하고, 평가서로 기록해봐요!'),
               const SizedBox(height: 15),
-              _buildFeatureItem('2', '오늘의 식단 구성', '최적의 컨디션을 위한 맞춤형 식단을 제공합니다!'),
+              _buildAnimatedFeatureItem(
+                  1, '2', '오늘의 식단 구성', '최적의 컨디션을 위한 맞춤형 식단을 제공합니다!'),
               const SizedBox(height: 15),
-              _buildFeatureItem('3', '오디션 우선 제공', '비공개 오디션 기회를 누구보다 먼저 누리세요!'),
+              _buildAnimatedFeatureItem(
+                  2, '3', '오디션 우선 제공', '비공개 오디션 기회를 누구보다 먼저 누리세요!'),
               const Spacer(),
-              _buildSubscriptionButton(context),
+              _buildAnimatedSubscriptionButton(),
               const SizedBox(height: 20),
             ],
           ),
@@ -130,6 +161,21 @@ class SubscriptionPage extends StatelessWidget {
     );
   }
 
+  Widget _buildAnimatedFeatureItem(
+      int index, String number, String title, String description) {
+    return AnimatedOpacity(
+      opacity: _featureAnimations[index] ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 500),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+        transform:
+            Matrix4.translationValues(0, _featureAnimations[index] ? 0 : 20, 0),
+        child: _buildFeatureItem(number, title, description),
+      ),
+    );
+  }
+
   Widget _buildSubscriptionButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -155,7 +201,7 @@ class SubscriptionPage extends StatelessWidget {
                 Center(
                   child: TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop(); // 팝업 닫기
+                      Navigator.of(context).pop();
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: const Color(0xFFEF69A6),
@@ -222,6 +268,19 @@ class SubscriptionPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildAnimatedSubscriptionButton() {
+    return AnimatedOpacity(
+      opacity: _buttonAnimation ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 500),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+        transform: Matrix4.translationValues(0, _buttonAnimation ? 0 : 20, 0),
+        child: _buildSubscriptionButton(context),
       ),
     );
   }
