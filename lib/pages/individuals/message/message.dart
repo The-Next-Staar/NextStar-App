@@ -5,7 +5,7 @@ import 'dart:async';
 class MessagePage extends StatefulWidget {
   final Casting casting;
 
-  const MessagePage({Key? key, required this.casting}) : super(key: key);
+  const MessagePage({super.key, required this.casting});
 
   @override
   _MessagePageState createState() => _MessagePageState();
@@ -13,13 +13,13 @@ class MessagePage extends StatefulWidget {
 
 class _MessagePageState extends State<MessagePage> {
   List<Message> messages = [];
-  TextEditingController _messageController = TextEditingController();
-  ScrollController _scrollController = ScrollController();
+  final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 2), () {
+    Timer(const Duration(seconds: 2), () {
       setState(() {
         messages.add(Message(
           text:
@@ -35,7 +35,7 @@ class _MessagePageState extends State<MessagePage> {
   void _scrollToBottom() {
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );
   }
@@ -80,7 +80,7 @@ class _MessagePageState extends State<MessagePage> {
               child: Text(
                 widget.casting.company.company,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFF434343),
                   fontSize: 16,
                   fontFamily: 'Pretendard',
@@ -96,60 +96,74 @@ class _MessagePageState extends State<MessagePage> {
   }
 
   Widget _buildMessageBubble(Message message) {
-    return Align(
-      alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: message.isMe ? Color(0xFFEF69A6) : Color(0xFFFFE4EE),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              message.text,
-              style: TextStyle(
-                color: message.isMe ? Colors.white : Color(0xFF525252),
-                fontSize: 14,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w500,
-              ),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        double maxWidth = constraints.maxWidth * 0.7;
+        return Align(
+          alignment:
+              message.isMe ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: Column(
+              crossAxisAlignment: message.isMe
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: message.isMe
+                        ? const Color(0xFFEF69A6)
+                        : const Color(0xFFFFE4EE),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    message.text,
+                    style: TextStyle(
+                      color:
+                          message.isMe ? Colors.white : const Color(0xFF525252),
+                      fontSize: 14,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatTimestamp(message.timestamp),
+                  style: const TextStyle(
+                    color: Color(0xFF9E9E9E),
+                    fontSize: 12,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 4),
-            Text(
-              _formatTimestamp(message.timestamp),
-              style: TextStyle(
-                color: Color(0xFF9E9E9E),
-                fontSize: 12,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildInputArea() {
     return Container(
-      padding: EdgeInsets.all(8),
-      color: Color(0xFFF5F5F5),
+      padding: const EdgeInsets.all(8),
+      color: const Color(0xFFF5F5F5),
       child: Row(
         children: [
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Color(0xFFD9D9D9)),
+                border: Border.all(color: const Color(0xFFD9D9D9)),
               ),
               child: TextField(
                 controller: _messageController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: '메시지 입력',
                   hintStyle: TextStyle(color: Color(0xFFCBCBCB)),
                   border: InputBorder.none,
@@ -157,16 +171,16 @@ class _MessagePageState extends State<MessagePage> {
               ),
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           ElevatedButton(
             onPressed: _sendMessage,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFEF69A6),
+              backgroundColor: const Color(0xFFEF69A6),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text('전송', style: TextStyle(color: Colors.white)),
+            child: const Text('전송', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

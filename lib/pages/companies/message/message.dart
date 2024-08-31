@@ -106,41 +106,63 @@ class _MessagePageState extends State<MessagePage> {
   }
 
   Widget _buildMessageBubble(Message message) {
-    return Align(
-      alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color:
-              message.isMe ? const Color(0xFFEF69A6) : const Color(0xFFFFE4EE),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              message.text,
-              style: TextStyle(
-                color: message.isMe ? Colors.white : const Color(0xFF525252),
-                fontSize: 14,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w500,
-              ),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        double maxWidth = constraints.maxWidth * 0.7;
+        return Align(
+          alignment:
+              message.isMe ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: Column(
+              crossAxisAlignment: message.isMe
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: message.isMe
+                        ? const Color(0xFFEF69A6)
+                        : const Color(0xFFFFE4EE),
+                    borderRadius: BorderRadius.circular(8).copyWith(
+                      topLeft: message.isMe
+                          ? const Radius.circular(8)
+                          : const Radius.circular(0),
+                      topRight: message.isMe
+                          ? const Radius.circular(0)
+                          : const Radius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    message.text,
+                    style: TextStyle(
+                      color:
+                          message.isMe ? Colors.white : const Color(0xFF525252),
+                      fontSize: 14,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatTimestamp(message.timestamp),
+                  style: TextStyle(
+                    color: message.isMe
+                        ? const Color(0xFFEF69A6)
+                        : const Color(0xFF9E9E9E),
+                    fontSize: 12,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              _formatTimestamp(message.timestamp),
-              style: TextStyle(
-                color: message.isMe ? Colors.white : const Color(0xFF525252),
-                fontSize: 12,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
