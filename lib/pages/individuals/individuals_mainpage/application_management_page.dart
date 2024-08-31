@@ -5,7 +5,7 @@ import '../applicaiton_page.dart';
 import '../proposal_page.dart';
 
 class ApplicationManagementPage extends StatefulWidget {
-  const ApplicationManagementPage({Key? key}) : super(key: key);
+  const ApplicationManagementPage({super.key});
 
   @override
   _ApplicationManagementPageState createState() =>
@@ -15,6 +15,37 @@ class ApplicationManagementPage extends StatefulWidget {
 class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
   bool _isAppliedCompanies = true;
   String _castingFilter = '전체';
+  List<Casting> _filteredCastings = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filterCastings();
+  }
+
+  void _filterCastings() {
+    setState(() {
+      switch (_castingFilter) {
+        case '승인':
+          _filteredCastings = sampleCastings
+              .where((casting) => casting.status == CastingStatus.approved)
+              .toList();
+          break;
+        case '거절':
+          _filteredCastings = sampleCastings
+              .where((casting) => casting.status == CastingStatus.rejected)
+              .toList();
+          break;
+        case '대기중':
+          _filteredCastings = sampleCastings
+              .where((casting) => casting.status == CastingStatus.pending)
+              .toList();
+          break;
+        default:
+          _filteredCastings = List.from(sampleCastings);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,47 +69,77 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
   }
 
   Widget _buildToggleButtons() {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFD9D9D9))),
-      ),
-      child: Row(
-        children: [
-          _buildToggleButton('내가 지원한 기업', _isAppliedCompanies,
-              () => setState(() => _isAppliedCompanies = true)),
-          _buildToggleButton('캐스팅 받은 기업', !_isAppliedCompanies,
-              () => setState(() => _isAppliedCompanies = false)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToggleButton(String text, bool isSelected, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color:
-                    isSelected ? const Color(0xFFEF69A6) : Colors.transparent,
-                width: 2,
-              ),
-            ),
-          ),
-          child: Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: isSelected
-                  ? const Color(0xFFEF69A6)
-                  : const Color(0xFF878787),
-              fontSize: 16,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-            ),
-          ),
+    return Center(
+      child: Container(
+        height: 45,
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    height: 2,
+                    color: const Color(0xFFCBCBCB),
+                  ),
+                ),
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  left: _isAppliedCompanies ? 0 : constraints.maxWidth / 2,
+                  bottom: 0,
+                  child: Container(
+                    width: constraints.maxWidth / 2,
+                    height: 2,
+                    color: const Color(0xFFEF69A6),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    GestureDetector(
+                      onTap: () => setState(() => _isAppliedCompanies = true),
+                      child: Text(
+                        '내가 지원한 기업',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _isAppliedCompanies
+                              ? const Color(0xFFEF69A6)
+                              : const Color(0xFFCBCBCB),
+                          fontSize: 16,
+                          fontFamily: 'Pretendard',
+                          fontWeight: _isAppliedCompanies
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => setState(() => _isAppliedCompanies = false),
+                      child: Text(
+                        '캐스팅 받은 기업',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: !_isAppliedCompanies
+                              ? const Color(0xFFEF69A6)
+                              : const Color(0xFFCBCBCB),
+                          fontSize: 16,
+                          fontFamily: 'Pretendard',
+                          fontWeight: !_isAppliedCompanies
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -86,10 +147,10 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
 
   Widget _buildCompanyCount() {
     final count =
-        _isAppliedCompanies ? applications.length : sampleCastings.length;
+        _isAppliedCompanies ? applications.length : _filteredCastings.length;
     final unreadCount = _isAppliedCompanies
         ? applications.where((app) => !app.isViewed).length
-        : sampleCastings.where((casting) => !casting.isRead).length;
+        : _filteredCastings.where((casting) => !casting.isRead).length;
 
     return Padding(
       padding: const EdgeInsets.only(left: 20, top: 20, bottom: 10),
@@ -143,6 +204,7 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
         onTap: () {
           setState(() {
             _castingFilter = label;
+            _filterCastings();
           });
         },
         child: Center(
@@ -273,10 +335,10 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
 
   Widget _buildCastingCompaniesList() {
     List<Casting> unreadCastings =
-        sampleCastings.where((casting) => !casting.isRead).toList();
+        _filteredCastings.where((casting) => !casting.isRead).toList();
 
     List<Casting> readCastings =
-        sampleCastings.where((casting) => casting.isRead).toList();
+        _filteredCastings.where((casting) => casting.isRead).toList();
 
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -307,6 +369,7 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
                   ).then((_) {
                     setState(() {
                       casting.markAsRead();
+                      _filterCastings();
                     });
                   });
                 },
@@ -339,6 +402,7 @@ class _ApplicationManagementPageState extends State<ApplicationManagementPage> {
                   ).then((_) {
                     setState(() {
                       casting.markAsRead();
+                      _filterCastings();
                     });
                   });
                 },

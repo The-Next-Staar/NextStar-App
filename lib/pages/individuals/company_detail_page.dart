@@ -182,7 +182,7 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
 
   Widget _buildRequirementCard(String requirement) {
     return Container(
-      width: 350,
+      width: double.infinity,
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(18),
       decoration: ShapeDecoration(
