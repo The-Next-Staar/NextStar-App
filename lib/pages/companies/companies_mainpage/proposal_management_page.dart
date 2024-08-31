@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 import '../../../models/casting.dart';
 import '../../../models/proposal.dart';
+import '../../../models/trainee.dart';
 import '../message/message.dart';
 import '../trainee_info_page.dart';
 
@@ -15,18 +17,61 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
   bool _isProposalList = true;
   String _selectedFilter = '전체';
   List<Proposal> _proposals = [];
+  List<Proposal> _castings = [];
 
   @override
   void initState() {
     super.initState();
-    _loadProposals();
+    _loadProposalsAndCastings();
   }
 
-  void _loadProposals() {
+  void _loadProposalsAndCastings() {
     setState(() {
-      _proposals = sampleProposals
-          .where((proposal) => proposal.company?.company == 'JYP Entertainment')
+      final shuffledTrainees = List<Trainee>.from(trainees)..shuffle(Random());
+
+      List<Trainee> proposalTrainees =
+          shuffledTrainees.sublist(0, shuffledTrainees.length ~/ 2);
+      List<Trainee> castingTrainees =
+          shuffledTrainees.sublist(shuffledTrainees.length ~/ 2);
+
+      _proposals = proposalTrainees
+          .map((trainee) => Proposal(
+                id: 'proposal_${trainee.name}',
+                company: sampleProposals[0].company,
+                trainee: trainee,
+                message: '${trainee.name}님, 오디션에 참여해주시겠습니까?',
+                date: DateTime.now()
+                    .subtract(Duration(days: Random().nextInt(30))),
+                deadline: DateTime.now()
+                    .add(Duration(days: Random().nextInt(14) + 1)),
+                contactPerson: '김캐스팅',
+                contactEmail: 'casting@jyp.com',
+                contactPhone: '010-1234-5678',
+                status: ProposalStatus.pending,
+              ))
           .toList();
+
+      _castings = castingTrainees
+          .map((trainee) => Proposal(
+                id: 'casting_${trainee.name}',
+                company: sampleProposals[0].company,
+                trainee: trainee,
+                message: '${trainee.name}님, 캐스팅 되셨습니다!',
+                date: DateTime.now()
+                    .subtract(Duration(days: Random().nextInt(60) + 30)),
+                deadline: DateTime.now()
+                    .add(Duration(days: Random().nextInt(30) + 1)),
+                contactPerson: '박매니저',
+                contactEmail: 'manager@jyp.com',
+                contactPhone: '010-9876-5432',
+                status: Random().nextBool()
+                    ? ProposalStatus.approved
+                    : ProposalStatus.rejected,
+              ))
+          .toList();
+
+      _proposals.shuffle();
+      _castings.shuffle();
     });
   }
 
@@ -43,7 +88,7 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
-                _loadProposals();
+                _loadProposalsAndCastings();
               },
               child:
                   _isProposalList ? _buildProposalList() : _buildCastingList(),
@@ -140,7 +185,7 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
 
   Widget _buildFilterChips() {
     List<String> filters =
-        _isProposalList ? ['전체', '여자', '남자'] : ['전체', '승인', '거절', '대기중'];
+        _isProposalList ? ['전체', '여자', '남자'] : ['전체', '승인', '거절'];
     return Container(
       margin: const EdgeInsets.only(left: 20, top: 15, bottom: 15),
       child: Wrap(
@@ -196,8 +241,9 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
   }
 
   List<Proposal> _getFilteredProposals() {
-    if (_selectedFilter == '전체') return _proposals;
-    return _proposals.where((proposal) {
+    final List<Proposal> sourceList = _isProposalList ? _proposals : _castings;
+    if (_selectedFilter == '전체') return sourceList;
+    return sourceList.where((proposal) {
       if (_isProposalList) {
         return proposal.trainee.gender == _selectedFilter;
       } else {
@@ -206,8 +252,6 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
             return proposal.status == ProposalStatus.approved;
           case '거절':
             return proposal.status == ProposalStatus.rejected;
-          case '대기중':
-            return proposal.status == ProposalStatus.pending;
           default:
             return true;
         }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../models/casting.dart';
+import '../../models/company.dart';
 import '../../models/trainee.dart';
+import 'message/message.dart';
 
 class TraineeInfoPage extends StatefulWidget {
   final Trainee trainee;
@@ -341,7 +344,7 @@ class _TraineeInfoPageState extends State<TraineeInfoPage> {
   Widget _buildCastingButton() {
     return Container(
       width: double.infinity,
-      height: 132,
+      height: 110,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 29),
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -357,7 +360,23 @@ class _TraineeInfoPageState extends State<TraineeInfoPage> {
           ),
         ),
         onPressed: () {
-          // TODO: Implement casting functionality
+          Casting casting = Casting(
+            trainee: widget.trainee,
+            company: Company(
+                company: 'example', logoPath: 'assets/images/example.png'),
+            message: '',
+            date: DateTime.now().toString(),
+            contactPerson: '',
+            contactEmail: '',
+            contactPhone: '',
+          );
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MessagePage(casting: casting),
+            ),
+          );
         },
         child: const Text(
           '캐스팅하기',
