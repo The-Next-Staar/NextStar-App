@@ -34,11 +34,13 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
     '프로듀싱',
     '기타'
   ];
+  late List<String> _availableRequirementOptions;
 
   @override
   void initState() {
     super.initState();
     _initializeControllers();
+    _availableRequirementOptions = List.from(_requirementOptions);
   }
 
   void _initializeControllers() {
@@ -52,6 +54,12 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
     _selectedLogoPath = widget.company.logoPath;
     _requirements = List.from(widget.company.requirements);
     _requirementDetails = Map.from(widget.company.requirementDetails);
+
+    for (var requirement in _requirements) {
+      if (_requirementOptions.contains(requirement)) {
+        _availableRequirementOptions.remove(requirement);
+      }
+    }
   }
 
   @override
@@ -500,8 +508,13 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                         )
                       : DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            value: requirement,
-                            items: _requirementOptions.map((String value) {
+                            value: _availableRequirementOptions
+                                    .contains(requirement)
+                                ? requirement
+                                : null,
+                            hint: Text(requirement),
+                            items: _availableRequirementOptions
+                                .map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -513,6 +526,14 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                                   int index =
                                       _requirements.indexOf(requirement);
                                   if (index != -1) {
+                                    if (_requirementOptions
+                                        .contains(requirement)) {
+                                      _availableRequirementOptions
+                                          .add(requirement);
+                                    }
+                                    _availableRequirementOptions
+                                        .remove(newValue);
+
                                     _requirements[index] = newValue;
                                     if (_requirementDetails
                                         .containsKey(requirement)) {
@@ -533,6 +554,9 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
               GestureDetector(
                 onTap: () {
                   setState(() {
+                    if (_requirementOptions.contains(requirement)) {
+                      _availableRequirementOptions.add(requirement);
+                    }
                     _requirements.remove(requirement);
                     _requirementDetails.remove(requirement);
                   });
@@ -554,23 +578,34 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
         ),
         Container(
           margin: const EdgeInsets.only(bottom: 10),
-          child: TextField(
-            controller: TextEditingController(
-                text: _requirementDetails[requirement] ?? ''),
-            decoration: InputDecoration(
-              hintText: '구체적인 설명을 적어주세요.',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: const BorderSide(color: Color(0xFFD9D9D9)),
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+              borderRadius: BorderRadius.circular(6),
             ),
-            onChanged: (value) {
-              setState(() {
-                _requirementDetails[requirement] = value;
-              });
-            },
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: TextField(
+              controller: TextEditingController(
+                  text: _requirementDetails[requirement] ?? ''),
+              decoration: const InputDecoration(
+                hintText: '구체적인 설명을 적어주세요.',
+                hintStyle: TextStyle(
+                  color: Color(0xFFCBCBCB),
+                  fontSize: 14,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w400,
+                ),
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _requirementDetails[requirement] = value;
+                });
+              },
+            ),
           ),
         ),
         const Divider(color: Color(0xFFE0E0E0), height: 1),
@@ -582,11 +617,9 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
   Widget _buildAddRequirementButton() {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          String newRequirement = _requirementOptions.first;
-          _requirements.add(newRequirement);
-          _requirementDetails[newRequirement] = '';
-        });
+        if (_availableRequirementOptions.isNotEmpty) {
+          _addRequirement(_availableRequirementOptions.first);
+        }
       },
       child: Container(
         width: MediaQuery.of(context).size.width - 40,
@@ -597,14 +630,18 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: ShapeDecoration(
-                color: const Color(0xFFD9D9D9),
+                color: _availableRequirementOptions.isEmpty
+                    ? const Color(0xFFE0E0E0)
+                    : const Color(0xFFD9D9D9),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4)),
               ),
-              child: const Text(
+              child: Text(
                 '추가하기',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: _availableRequirementOptions.isEmpty
+                      ? const Color(0xFF9E9E9E)
+                      : Colors.white,
                   fontSize: 14,
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w600,
@@ -616,6 +653,14 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
         ),
       ),
     );
+  }
+
+  void _addRequirement(String newRequirement) {
+    setState(() {
+      _requirements.add(newRequirement);
+      _requirementDetails[newRequirement] = '';
+      _availableRequirementOptions.remove(newRequirement);
+    });
   }
 
   Widget _buildSaveButton() {

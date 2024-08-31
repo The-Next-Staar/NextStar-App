@@ -55,77 +55,78 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
   }
 
   Widget _buildToggleButtons() {
-    return Container(
-      width: 350,
-      height: 35,
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      child: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            top: 33,
-            child: Container(
-              width: 350,
-              height: 2,
-              decoration: BoxDecoration(
-                  color: _isProposalList
-                      ? const Color(0xFFCBCBCB)
-                      : const Color(0xFFEF69A6)),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            top: 33,
-            child: Container(
-              width: 176,
-              height: 2,
-              decoration: BoxDecoration(
-                  color: _isProposalList
-                      ? const Color(0xFFEF69A6)
-                      : const Color(0xFFCBCBCB)),
-            ),
-          ),
-          Positioned(
-            left: 44,
-            top: 0,
-            child: GestureDetector(
-              onTap: () => _setListType(true),
-              child: Text(
-                '지원자 리스트',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: _isProposalList
-                      ? const Color(0xFFEF69A6)
-                      : const Color(0xFFCBCBCB),
-                  fontSize: 16,
-                  fontFamily: 'Pretendard',
-                  fontWeight:
-                      _isProposalList ? FontWeight.w700 : FontWeight.w400,
+    return Center(
+      child: Container(
+        height: 45,
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    height: 2,
+                    color: const Color(0xFFCBCBCB),
+                  ),
                 ),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 216,
-            top: 0,
-            child: GestureDetector(
-              onTap: () => _setListType(false),
-              child: Text(
-                '캐스팅한 지원자',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: !_isProposalList
-                      ? const Color(0xFFEF69A6)
-                      : const Color(0xFFCBCBCB),
-                  fontSize: 16,
-                  fontFamily: 'Pretendard',
-                  fontWeight:
-                      !_isProposalList ? FontWeight.w700 : FontWeight.w400,
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  left: _isProposalList ? 0 : constraints.maxWidth / 2,
+                  bottom: 0,
+                  child: Container(
+                    width: constraints.maxWidth / 2,
+                    height: 2,
+                    color: const Color(0xFFEF69A6),
+                  ),
                 ),
-              ),
-            ),
-          ),
-        ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    GestureDetector(
+                      onTap: () => _setListType(true),
+                      child: Text(
+                        '지원자 리스트',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _isProposalList
+                              ? const Color(0xFFEF69A6)
+                              : const Color(0xFFCBCBCB),
+                          fontSize: 16,
+                          fontFamily: 'Pretendard',
+                          fontWeight: _isProposalList
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => _setListType(false),
+                      child: Text(
+                        '캐스팅한 지원자',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: !_isProposalList
+                              ? const Color(0xFFEF69A6)
+                              : const Color(0xFFCBCBCB),
+                          fontSize: 16,
+                          fontFamily: 'Pretendard',
+                          fontWeight: !_isProposalList
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -334,7 +335,7 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
 
   Widget _buildCastingCard(Proposal proposal) {
     return Container(
-      width: 350,
+      width: double.infinity,
       margin: const EdgeInsets.only(bottom: 15),
       decoration: ShapeDecoration(
         color: Colors.white,
@@ -401,63 +402,91 @@ class _ProposalManagementPageState extends State<ProposalManagementPage> {
               ],
             ),
           ),
-          Container(
-            width: 350,
-            height: 44,
-            decoration: ShapeDecoration(
-              color: _getStatusColor(proposal.status),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6)),
+          proposal.status == ProposalStatus.approved
+              ? _buildMessageButton(proposal)
+              : _buildStatusContainer(proposal.status),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageButton(Proposal proposal) {
+    return Container(
+      width: double.infinity,
+      height: 44,
+      decoration: const ShapeDecoration(
+        color: Color(0xFFEF69A6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(8),
+            bottomRight: Radius.circular(8),
+          ),
+        ),
+      ),
+      child: TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MessagePage(
+                casting: Casting(
+                  trainee: proposal.trainee,
+                  company: proposal.company!,
+                  message: '',
+                  date: DateTime.now().toString(),
+                  contactPerson: '',
+                  contactEmail: '',
+                  contactPhone: '',
+                ),
+              ),
             ),
-            child: Center(
-              child: proposal.status == ProposalStatus.approved
-                  ? ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MessagePage(
-                              casting: Casting(
-                                trainee: proposal.trainee,
-                                company: proposal.company!,
-                                message: '',
-                                date: DateTime.now().toString(),
-                                contactPerson: '',
-                                contactEmail: '',
-                                contactPhone: '',
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF69A6),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                      child: const Text(
-                        '메시지 함으로 이동하기',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
-                  : Text(
-                      _getStatusText(proposal.status),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+          );
+        },
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(8),
+              bottomRight: Radius.circular(8),
             ),
           ),
-        ],
+        ),
+        child: const Text(
+          '메시지 함으로 이동하기',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontFamily: 'Pretendard',
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusContainer(ProposalStatus status) {
+    return Container(
+      width: double.infinity,
+      height: 44,
+      decoration: ShapeDecoration(
+        color: _getStatusColor(status),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(8),
+            bottomRight: Radius.circular(8),
+          ),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          _getStatusText(status),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontFamily: 'Pretendard',
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }

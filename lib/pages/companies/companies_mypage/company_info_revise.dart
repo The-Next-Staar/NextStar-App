@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../../models/company.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,8 +7,7 @@ import 'package:image_picker/image_picker.dart';
 class CompanyInfoRevisePage extends StatefulWidget {
   final Company company;
 
-  const CompanyInfoRevisePage({Key? key, required this.company})
-      : super(key: key);
+  const CompanyInfoRevisePage({super.key, required this.company});
 
   @override
   _CompanyInfoRevisePageState createState() => _CompanyInfoRevisePageState();
@@ -16,10 +17,7 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
   late TextEditingController _companyNameController;
   late TextEditingController _descriptionController;
   late TextEditingController _locationController;
-  late TextEditingController _detailedDescriptionController;
   late TextEditingController _websiteController;
-  bool _isRecruiting = true;
-  int _daysLeft = 1;
   String? _selectedImagePath;
   String? _selectedLogoPath;
   final TextEditingController _hashtagController = TextEditingController();
@@ -36,43 +34,22 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
     '프로듀싱',
     '기타'
   ];
+  late List<String> _availableRequirementOptions;
+  bool _isRecruiting = true;
 
   @override
   void initState() {
     super.initState();
     _initializeControllers();
+    _availableRequirementOptions = List.from(_requirementOptions);
+    for (var requirement in _requirements) {
+      if (_requirementOptions.contains(requirement)) {
+        _availableRequirementOptions.remove(requirement);
+      }
+    }
   }
 
-  void _initializeControllers() {
-    _companyNameController =
-        TextEditingController(text: widget.company.company);
-    _descriptionController =
-        TextEditingController(text: widget.company.description);
-    _locationController = TextEditingController(text: widget.company.location);
-    _detailedDescriptionController =
-        TextEditingController(text: widget.company.detailedDescription);
-    _websiteController = TextEditingController(text: widget.company.website);
-    _isRecruiting = widget.company.isRecruiting;
-    _daysLeft = widget.company.daysLeft;
-    _selectedImagePath = widget.company.imagePath;
-    _selectedLogoPath = widget.company.logoPath;
-    _hashtags = widget.company.industry.split(',');
-    _requirements = List.from(widget.company.requirements);
-    _requirementDetails = Map.from(widget.company.requirementDetails);
-  }
-
-  @override
-  void dispose() {
-    _companyNameController.dispose();
-    _descriptionController.dispose();
-    _locationController.dispose();
-    _detailedDescriptionController.dispose();
-    _websiteController.dispose();
-    _hashtagController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _pickImage({bool isLogo = false}) async {
+  Future<void> _pickImage({required bool isLogo}) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
@@ -87,40 +64,66 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
     }
   }
 
+  void _initializeControllers() {
+    _companyNameController =
+        TextEditingController(text: widget.company.company);
+    _descriptionController =
+        TextEditingController(text: widget.company.description);
+    _locationController = TextEditingController(text: widget.company.location);
+    _websiteController = TextEditingController(text: widget.company.website);
+    _selectedImagePath = widget.company.imagePath;
+    _selectedLogoPath = widget.company.logoPath;
+    _hashtags = widget.company.industry.split(',');
+    _requirements = List.from(widget.company.requirements);
+    _requirementDetails = Map.from(widget.company.requirementDetails);
+  }
+
+  @override
+  void dispose() {
+    _companyNameController.dispose();
+    _descriptionController.dispose();
+    _locationController.dispose();
+    _websiteController.dispose();
+    _hashtagController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          _buildAppBar(),
+          _buildAppBar(context),
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      '기업 정보 수정',
-                      style: TextStyle(
-                        color: Color(0xFF434343),
-                        fontSize: 18,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w700,
+                    const Center(
+                      child: Text(
+                        '기업 정보 수정',
+                        style: TextStyle(
+                          color: Color(0xFF434343),
+                          fontSize: 18,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildTextField('기업 명', _companyNameController),
+                    _buildInputField(
+                        '기업 명', _companyNameController, '기업 명을 입력해주세요.'),
                     _buildHashtagField(),
-                    _buildTextField('위치', _locationController),
-                    _buildTextField('기업 사이트', _websiteController),
+                    _buildInputField('위치', _locationController, '위치를 입력해주세요.'),
+                    _buildInputField(
+                        '기업 사이트', _websiteController, '기업 링크를 입력해주세요.'),
+                    _buildRecruitingSwitch(),
                     _buildImagePicker('기업 대표이미지', isLogo: false),
                     _buildImagePicker('기업 로고', isLogo: true),
-                    _buildRecruitingSwitch(),
-                    _buildTextField('간단 소개', _descriptionController,
-                        maxLines: 3),
-                    _buildTextField('상세 설명', _detailedDescriptionController,
-                        maxLines: 5),
+                    _buildDescriptionField(),
                     _buildRequirementsList(),
                     const SizedBox(height: 20),
                     _buildSaveButton(),
@@ -134,7 +137,7 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(BuildContext context) {
     return Container(
       width: double.infinity,
       height: 80,
@@ -152,168 +155,52 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
               width: 150,
               fit: BoxFit.contain,
             ),
-            const SizedBox(width: 32),
+            const SizedBox(width: 48),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      {int maxLines = 1}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color(0xFF434343),
-            fontSize: 18,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          controller: controller,
-          maxLines: maxLines,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: const BorderSide(color: Color(0xFFD9D9D9)),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          ),
-        ),
-        const SizedBox(height: 15),
-      ],
-    );
-  }
-
-  Widget _buildImagePicker(String label, {required bool isLogo}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color(0xFF434343),
-            fontSize: 18,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 10),
-        GestureDetector(
-          onTap: () => _pickImage(isLogo: isLogo),
-          child: Container(
-            width: double.infinity,
-            height: 45,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF4F4F5),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: Text(
-                    isLogo
-                        ? (_selectedLogoPath?.split('/').last ?? '로고 선택')
-                        : (_selectedImagePath?.split('/').last ?? '이미지 선택'),
-                    style: const TextStyle(
-                      color: Color(0xFF878787),
-                      fontSize: 14,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-                if (isLogo
-                    ? _selectedLogoPath != null
-                    : _selectedImagePath != null)
-                  const Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: Icon(Icons.check, color: Color(0xFF434343)),
-                  ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 15),
-      ],
-    );
-  }
-
-  Widget _buildRecruitingSwitch() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          '모집 중',
-          style: TextStyle(
-            color: Color(0xFF434343),
-            fontSize: 18,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Switch(
-          value: _isRecruiting,
-          onChanged: (value) {
-            setState(() {
-              _isRecruiting = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHashtagChip(String tag) {
+  Widget _buildInputField(
+      String label, TextEditingController controller, String hintText) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: ShapeDecoration(
-        color: const Color(0xFFD9D9D9),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      width: MediaQuery.of(context).size.width - 40,
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '#$tag',
+            label,
             style: const TextStyle(
-              color: Color(0xFF878787),
-              fontSize: 14,
+              color: Color(0xFF434343),
+              fontSize: 18,
               fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w600,
-              height: 1.2,
-              letterSpacing: 0.35,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _hashtags.remove(tag);
-              });
-            },
-            child: Container(
-              width: 14,
-              height: 14,
-              decoration: const ShapeDecoration(
-                color: Color(0xFFF4F4F5),
-                shape: OvalBorder(),
+          const SizedBox(height: 10),
+          Container(
+            height: 45,
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                borderRadius: BorderRadius.circular(6),
               ),
-              child: const Icon(
-                Icons.close,
-                size: 10,
-                color: Color(0xFF878787),
+            ),
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: const TextStyle(
+                  color: Color(0xFFCBCBCB),
+                  fontSize: 14,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w400,
+                ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
               ),
             ),
           ),
@@ -323,87 +210,376 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
   }
 
   Widget _buildHashtagField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '업종 (해시태그)',
-          style: TextStyle(
-            color: Color(0xFF434343),
-            fontSize: 18,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w700,
+    return Container(
+      width: MediaQuery.of(context).size.width - 40,
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '업종',
+            style: TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 18,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          width: 350,
-          height: 45,
-          decoration: ShapeDecoration(
-            color: const Color(0xFFF4F4F5),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ..._hashtags.map(_buildHashtagChip),
-                      SizedBox(
-                        width: 100,
-                        child: TextField(
-                          controller: _hashtagController,
-                          decoration: const InputDecoration(
-                            hintText: '해시태그...',
-                            hintStyle: TextStyle(color: Color(0xFF878787)),
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10),
+          const SizedBox(height: 10),
+          Container(
+            height: 45,
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ..._hashtags.map((tag) => _buildHashtagChip(tag)),
+                        SizedBox(
+                          width: 100,
+                          child: TextField(
+                            controller: _hashtagController,
+                            decoration: const InputDecoration(
+                              hintText: '해시태그...',
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                            textInputAction: TextInputAction.done,
+                            onChanged: (value) {
+                              if (value.endsWith(' ')) {
+                                setState(() {
+                                  _hashtags.add(value.trim());
+                                  _hashtagController.clear();
+                                });
+                              }
+                            },
+                            onSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                setState(() {
+                                  _hashtags.add(value);
+                                  _hashtagController.clear();
+                                });
+                              }
+                            },
                           ),
-                          onSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              setState(() {
-                                _hashtags.add(value);
-                                _hashtagController.clear();
-                              });
-                            }
-                          },
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHashtagChip(String tag) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: const EdgeInsets.only(left: 5),
+      decoration: ShapeDecoration(
+        color: const Color(0xFFFFF3F8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            tag,
+            style: const TextStyle(
+              color: Color(0xFFA139B2),
+              fontSize: 14,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(width: 5),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _hashtags.remove(tag);
+              });
+            },
+            child: const Icon(Icons.close, size: 14, color: Color(0xFFA139B2)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImagePicker(String label, {required bool isLogo}) {
+    final String? imagePath = isLogo ? _selectedLogoPath : _selectedImagePath;
+    final bool hasImage = imagePath != null && imagePath.isNotEmpty;
+
+    return Container(
+      width: MediaQuery.of(context).size.width - 40,
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 18,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: () => _pickImage(isLogo: isLogo),
+            child: Container(
+              width: MediaQuery.of(context).size.width - 40,
+              height: 45,
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              decoration: ShapeDecoration(
+                color: const Color(0xFFF4F4F5),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD9D9D9),
+                      borderRadius: BorderRadius.circular(4),
+                      image: hasImage
+                          ? DecorationImage(
+                              image: FileImage(File(imagePath)),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                    ),
+                    child: hasImage
+                        ? null
+                        : const Icon(Icons.add_photo_alternate,
+                            size: 20, color: Colors.white),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      hasImage ? '이미지 변경' : '눌러서 파일을 업로드하세요',
+                      style: const TextStyle(
+                        color: Color(0xFF878787),
+                        fontSize: 14,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (hasImage)
+                    const Icon(Icons.check, color: Color(0xFF434343)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  DecorationImage? _getImageProvider(bool isLogo) {
+    final String? path = isLogo ? _selectedLogoPath : _selectedImagePath;
+    if (path != null && path.isNotEmpty) {
+      final file = File(path);
+      if (file.existsSync()) {
+        return DecorationImage(
+          image: FileImage(file),
+          fit: BoxFit.cover,
+        );
+      }
+    }
+    return null;
+  }
+
+  String _getImageText(bool isLogo) {
+    final String? path = isLogo ? _selectedLogoPath : _selectedImagePath;
+    if (path != null && path.isNotEmpty) {
+      final file = File(path);
+      if (file.existsSync()) {
+        return _truncateFileName(file.uri.pathSegments.last);
+      }
+    }
+    return '눌러서 파일을 업로드하세요';
+  }
+
+  String _truncateFileName(String fileName) {
+    return fileName.length > 20 ? '${fileName.substring(0, 17)}...' : fileName;
+  }
+
+  Widget? _getImageChild(bool isLogo) {
+    final String? path = isLogo ? _selectedLogoPath : _selectedImagePath;
+    if (path == null || path.isEmpty) {
+      return const Icon(Icons.add_photo_alternate,
+          size: 20, color: Colors.white);
+    }
+    return null;
+  }
+
+  Widget _buildDescriptionField() {
+    return Container(
+      width: MediaQuery.of(context).size.width - 40,
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '기업 설명',
+            style: TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 18,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            height: 87,
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            child: TextField(
+              controller: _descriptionController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                hintText: '기업 소개 글을 적어주세요.',
+                hintStyle: TextStyle(
+                  color: Color(0xFFCBCBCB),
+                  fontSize: 14,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w400,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.all(15),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller,
+      {String? hintText, int maxLines = 1}) {
+    return Container(
+      width: MediaQuery.of(context).size.width - 40,
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 18,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            height: maxLines > 1 ? null : 45,
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            child: TextField(
+              controller: controller,
+              maxLines: maxLines,
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: const TextStyle(
+                  color: Color(0xFFCBCBCB),
+                  fontSize: 14,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w400,
+                ),
+                border: InputBorder.none,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecruitingSwitch() {
+    return Container(
+      width: MediaQuery.of(context).size.width - 40,
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            '모집 중',
+            style: TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 18,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Switch(
+            value: _isRecruiting,
+            onChanged: (value) {
+              setState(() {
+                _isRecruiting = value;
+              });
+            },
+            activeColor: const Color(0xFFEF69A6),
+            activeTrackColor: const Color(0xFFEF69A6).withOpacity(0.5),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildRequirementsList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '요구사항',
-          style: TextStyle(
-            color: Color(0xFF434343),
-            fontSize: 18,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w700,
+    return Container(
+      width: MediaQuery.of(context).size.width - 40,
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '이런 부분을 고려해요',
+            style: TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 18,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        ..._requirements.map(_buildRequirementItem),
-        const SizedBox(height: 10),
-        _buildAddRequirementButton(),
-      ],
+          const SizedBox(height: 10),
+          ..._requirements.map(_buildRequirementItem),
+          const SizedBox(height: 10),
+          _buildAddRequirementButton(),
+        ],
+      ),
     );
   }
 
@@ -416,18 +592,18 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
             Expanded(
               child: Container(
                 height: 45,
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                    side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
                     borderRadius: BorderRadius.circular(6),
                   ),
                 ),
                 child: isCustom
                     ? TextField(
                         controller: TextEditingController(text: requirement),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: '요구사항을 입력하세요',
                         ),
@@ -450,8 +626,13 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
                       )
                     : DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                          value: requirement,
-                          items: _requirementOptions.map((String value) {
+                          value:
+                              _availableRequirementOptions.contains(requirement)
+                                  ? requirement
+                                  : null,
+                          hint: Text(requirement),
+                          items:
+                              _availableRequirementOptions.map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(value),
@@ -462,13 +643,19 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
                               setState(() {
                                 int index = _requirements.indexOf(requirement);
                                 if (index != -1) {
-                                  String oldRequirement = _requirements[index];
+                                  if (_requirementOptions
+                                      .contains(requirement)) {
+                                    _availableRequirementOptions
+                                        .add(requirement);
+                                  }
+                                  _availableRequirementOptions.remove(newValue);
+
                                   _requirements[index] = newValue;
                                   if (_requirementDetails
-                                      .containsKey(oldRequirement)) {
+                                      .containsKey(requirement)) {
                                     String detail =
-                                        _requirementDetails[oldRequirement]!;
-                                    _requirementDetails.remove(oldRequirement);
+                                        _requirementDetails[requirement]!;
+                                    _requirementDetails.remove(requirement);
                                     _requirementDetails[newValue] = detail;
                                   }
                                 }
@@ -479,10 +666,13 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
                       ),
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             GestureDetector(
               onTap: () {
                 setState(() {
+                  if (_requirementOptions.contains(requirement)) {
+                    _availableRequirementOptions.add(requirement);
+                  }
                   _requirements.remove(requirement);
                   _requirementDetails.remove(requirement);
                 });
@@ -490,38 +680,51 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
               child: Container(
                 width: 24,
                 height: 24,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: Color(0xFFD9D9D9),
                 ),
-                child: Center(
+                child: const Center(
                   child: Icon(Icons.close, size: 16, color: Colors.white),
                 ),
               ),
             ),
           ],
         ),
-        SizedBox(height: 10),
-        TextField(
-          controller: TextEditingController(
-              text: _requirementDetails[requirement] ?? ''),
-          decoration: InputDecoration(
-            hintText: '구체적인 설명을 적어주세요.',
-            border: OutlineInputBorder(
+        const SizedBox(height: 10),
+        Container(
+          decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
               borderRadius: BorderRadius.circular(6),
-              borderSide: BorderSide(color: Color(0xFFD9D9D9)),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           ),
-          onChanged: (value) {
-            setState(() {
-              _requirementDetails[requirement] = value;
-            });
-          },
+          child: TextField(
+            controller: TextEditingController(
+                text: _requirementDetails[requirement] ?? ''),
+            decoration: const InputDecoration(
+              hintText: '구체적인 설명을 적어주세요.',
+              hintStyle: TextStyle(
+                color: Color(0xFFCBCBCB),
+                fontSize: 14,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+              ),
+              border: InputBorder.none,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            ),
+            onChanged: (value) {
+              setState(() {
+                _requirementDetails[requirement] = value;
+              });
+            },
+          ),
         ),
-        SizedBox(height: 15),
-        Divider(color: Color(0xFFE0E0E0), height: 1),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
+        const Divider(color: Color(0xFFE0E0E0), height: 1),
+        const SizedBox(height: 15),
       ],
     );
   }
@@ -529,14 +732,12 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
   Widget _buildAddRequirementButton() {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          String newRequirement = _requirementOptions.first;
-          _requirements.add(newRequirement);
-          _requirementDetails[newRequirement] = '';
-        });
+        if (_availableRequirementOptions.isNotEmpty) {
+          _addRequirement(_availableRequirementOptions.first);
+        }
       },
       child: Container(
-        width: 350,
+        width: MediaQuery.of(context).size.width - 40,
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -544,14 +745,18 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: ShapeDecoration(
-                color: const Color(0xFFD9D9D9),
+                color: _availableRequirementOptions.isEmpty
+                    ? const Color(0xFFE0E0E0)
+                    : const Color(0xFFD9D9D9),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4)),
               ),
-              child: const Text(
+              child: Text(
                 '추가하기',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: _availableRequirementOptions.isEmpty
+                      ? const Color(0xFF9E9E9E)
+                      : Colors.white,
                   fontSize: 14,
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w600,
@@ -565,10 +770,19 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
     );
   }
 
+  void _addRequirement(String newRequirement) {
+    setState(() {
+      _requirements.add(newRequirement);
+      _requirementDetails[newRequirement] = '';
+      _availableRequirementOptions.remove(newRequirement);
+    });
+  }
+
   Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
+    return Container(
+      width: MediaQuery.of(context).size.width - 40,
       height: 44,
+      margin: const EdgeInsets.only(bottom: 20),
       child: ElevatedButton(
         onPressed: _saveCompanyInfo,
         style: ElevatedButton.styleFrom(
@@ -596,12 +810,10 @@ class _CompanyInfoRevisePageState extends State<CompanyInfoRevisePage> {
       description: _descriptionController.text,
       industry: _hashtags.join(','),
       location: _locationController.text,
-      detailedDescription: _detailedDescriptionController.text,
       website: _websiteController.text,
       imagePath: _selectedImagePath,
       logoPath: _selectedLogoPath,
       isRecruiting: _isRecruiting,
-      daysLeft: _daysLeft,
       requirements: _requirements,
       requirementDetails: _requirementDetails,
     );
