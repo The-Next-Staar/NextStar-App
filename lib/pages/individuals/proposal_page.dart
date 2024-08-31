@@ -21,25 +21,27 @@ class _ProposalPageState extends State<ProposalPage> {
       body: Column(
         children: [
           _buildAppBar(context),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildCastingMessage(),
-                  const SizedBox(height: 20),
-                  _buildCompanyInfo(),
-                  const SizedBox(height: 20),
-                  if (!isApproved &&
-                      widget.casting.status == CastingStatus.pending) ...[
-                    _buildApproveButton(context),
-                    const SizedBox(height: 10),
-                    _buildRejectButton(context),
-                  ] else if (isApproved) ...[
-                    _buildMessageButton(context),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCastingMessage(),
+                    const SizedBox(height: 20),
+                    _buildCompanyInfo(),
+                    const SizedBox(height: 20),
+                    if (!isApproved &&
+                        widget.casting.status == CastingStatus.pending) ...[
+                      _buildApproveButton(context),
+                      const SizedBox(height: 10),
+                      _buildRejectButton(context),
+                    ] else if (isApproved) ...[
+                      _buildMessageButton(context),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),
@@ -97,6 +99,7 @@ class _ProposalPageState extends State<ProposalPage> {
         ),
         const SizedBox(height: 20),
         Container(
+          width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: const Color(0xFFF4F4F5),
@@ -187,7 +190,7 @@ class _ProposalPageState extends State<ProposalPage> {
         ),
         const SizedBox(height: 20),
         Container(
-          width: 350,
+          width: double.infinity,
           height: 129,
           decoration: BoxDecoration(
             color: Colors.grey,
@@ -255,7 +258,7 @@ class _ProposalPageState extends State<ProposalPage> {
 
   Widget _buildApproveButton(BuildContext context) {
     return SizedBox(
-      width: 350,
+      width: double.infinity,
       height: 44,
       child: ElevatedButton(
         onPressed: () {
@@ -277,7 +280,7 @@ class _ProposalPageState extends State<ProposalPage> {
 
   Widget _buildMessageButton(BuildContext context) {
     return SizedBox(
-      width: 350,
+      width: double.infinity,
       height: 44,
       child: ElevatedButton(
         onPressed: () {
@@ -301,25 +304,21 @@ class _ProposalPageState extends State<ProposalPage> {
   }
 
   Widget _buildRejectButton(BuildContext context) {
-    return Positioned(
-      left: 20,
-      top: 730,
-      child: SizedBox(
-        width: 350,
-        height: 44,
-        child: ElevatedButton(
-          onPressed: () {
-            widget.casting.reject();
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFECDE0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
-            ),
+    return SizedBox(
+      width: double.infinity,
+      height: 44,
+      child: ElevatedButton(
+        onPressed: () {
+          widget.casting.reject();
+          Navigator.pop(context);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFFECDE0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
           ),
-          child: const Text('거절하기', style: TextStyle(color: Colors.white)),
         ),
+        child: const Text('거절하기', style: TextStyle(color: Colors.white)),
       ),
     );
   }
