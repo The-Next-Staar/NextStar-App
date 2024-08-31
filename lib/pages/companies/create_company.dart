@@ -130,7 +130,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
   Widget _buildInputField(
       String label, TextEditingController controller, String hintText) {
     return Container(
-      width: 350,
+      width: MediaQuery.of(context).size.width - 40,
       margin: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,7 +176,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
 
   Widget _buildHashtagField() {
     return Container(
-      width: 350,
+      width: MediaQuery.of(context).size.width - 40,
       margin: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,7 +285,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
 
   Widget _buildImagePicker(String label, {required bool isLogo}) {
     return Container(
-      width: 350,
+      width: MediaQuery.of(context).size.width - 40,
       margin: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,7 +303,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
           GestureDetector(
             onTap: () => _pickImage(isLogo: isLogo),
             child: Container(
-              width: 350,
+              width: MediaQuery.of(context).size.width - 40,
               height: 45,
               padding: const EdgeInsets.symmetric(horizontal: 15),
               decoration: ShapeDecoration(
@@ -319,32 +319,21 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                     decoration: BoxDecoration(
                       color: const Color(0xFFD9D9D9),
                       borderRadius: BorderRadius.circular(4),
-                      image:
-                          (isLogo ? _selectedLogoPath : _selectedImagePath) !=
-                                  null
-                              ? DecorationImage(
-                                  image: FileImage(File(isLogo
-                                      ? _selectedLogoPath!
-                                      : _selectedImagePath!)),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
+                      image: _getImageProvider(isLogo),
                     ),
-                    child: (isLogo ? _selectedLogoPath : _selectedImagePath) ==
-                            null
-                        ? const Icon(Icons.add_photo_alternate,
-                            size: 20, color: Colors.white)
-                        : null,
+                    child: _getImageChild(isLogo),
                   ),
                   const SizedBox(width: 10),
-                  Text(
-                    (isLogo ? _selectedLogoPath : _selectedImagePath) ??
-                        '이미지를 선택해주세요.',
-                    style: const TextStyle(
-                      color: Color(0xFF878787),
-                      fontSize: 14,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w400,
+                  Expanded(
+                    child: Text(
+                      _getImageText(isLogo),
+                      style: const TextStyle(
+                        color: Color(0xFF878787),
+                        fontSize: 14,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -356,9 +345,47 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
     );
   }
 
+  DecorationImage? _getImageProvider(bool isLogo) {
+    final String? path = isLogo ? _selectedLogoPath : _selectedImagePath;
+    if (path != null && path.isNotEmpty) {
+      final file = File(path);
+      if (file.existsSync()) {
+        return DecorationImage(
+          image: FileImage(file),
+          fit: BoxFit.cover,
+        );
+      }
+    }
+    return null;
+  }
+
+  String _getImageText(bool isLogo) {
+    final String? path = isLogo ? _selectedLogoPath : _selectedImagePath;
+    if (path != null && path.isNotEmpty) {
+      final file = File(path);
+      if (file.existsSync()) {
+        return _truncateFileName(file.uri.pathSegments.last);
+      }
+    }
+    return '눌러서 파일을 업로드하세요';
+  }
+
+  String _truncateFileName(String fileName) {
+    return fileName.length > 20 ? '${fileName.substring(0, 17)}...' : fileName;
+  }
+
+  Widget? _getImageChild(bool isLogo) {
+    final String? path = isLogo ? _selectedLogoPath : _selectedImagePath;
+    if (path == null || path.isEmpty) {
+      return const Icon(Icons.add_photo_alternate,
+          size: 20, color: Colors.white);
+    }
+    return null;
+  }
+
   Widget _buildDescriptionField() {
     return Container(
-      width: 350,
+      width: MediaQuery.of(context).size.width - 40,
       margin: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -405,7 +432,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
 
   Widget _buildRequirementField() {
     return SizedBox(
-      width: 350,
+      width: MediaQuery.of(context).size.width - 40,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -460,7 +487,6 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                               int index = _requirements.indexOf(requirement);
                               if (index != -1) {
                                 _requirements[index] = value;
-                                // Update the key in requirementDetails
                                 if (_requirementDetails
                                     .containsKey(requirement)) {
                                   String detail =
@@ -488,7 +514,6 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
                                       _requirements.indexOf(requirement);
                                   if (index != -1) {
                                     _requirements[index] = newValue;
-                                    // Update the key in requirementDetails
                                     if (_requirementDetails
                                         .containsKey(requirement)) {
                                       String detail =
@@ -564,7 +589,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
         });
       },
       child: Container(
-        width: 350,
+        width: MediaQuery.of(context).size.width - 40,
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -595,7 +620,7 @@ class _CompanyCreatePageState extends State<CompanyCreatePage> {
 
   Widget _buildSaveButton() {
     return SizedBox(
-      width: 350,
+      width: MediaQuery.of(context).size.width - 40,
       height: 44,
       child: ElevatedButton(
         onPressed: () {

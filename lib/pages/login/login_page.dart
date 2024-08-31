@@ -57,9 +57,11 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   AnimatedPositioned(
                     duration: const Duration(milliseconds: 300),
-                    left: isIndividualSelected ? 0 : 169,
+                    left: isIndividualSelected
+                        ? 0
+                        : MediaQuery.of(context).size.width / 2 - 26,
                     child: Container(
-                      width: 170,
+                      width: (MediaQuery.of(context).size.width - 52) / 2,
                       height: 4,
                       decoration: BoxDecoration(color: tnsMainPink),
                     ),
@@ -68,53 +70,55 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Positioned(
-              left: 80,
+              left: 0,
+              right: 0,
               top: 283,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isIndividualSelected = true;
-                  });
-                },
-                child: Text(
-                  '개인회원',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: isIndividualSelected
-                        ? tnsMainPink
-                        : const Color(0xFFCBCBCB),
-                    fontSize: 18,
-                    fontFamily: 'Pretendard',
-                    fontWeight: isIndividualSelected
-                        ? FontWeight.w700
-                        : FontWeight.w400,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isIndividualSelected = true;
+                      });
+                    },
+                    child: Text(
+                      '개인회원',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: isIndividualSelected
+                            ? tnsMainPink
+                            : const Color(0xFFCBCBCB),
+                        fontSize: 18,
+                        fontFamily: 'Pretendard',
+                        fontWeight: isIndividualSelected
+                            ? FontWeight.w700
+                            : FontWeight.w400,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-            Positioned(
-              left: 253,
-              top: 283,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isIndividualSelected = false;
-                  });
-                },
-                child: Text(
-                  '기업회원',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: isIndividualSelected
-                        ? const Color(0xFFCBCBCB)
-                        : tnsMainPink,
-                    fontSize: 18,
-                    fontFamily: 'Pretendard',
-                    fontWeight: isIndividualSelected
-                        ? FontWeight.w400
-                        : FontWeight.w700,
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isIndividualSelected = false;
+                      });
+                    },
+                    child: Text(
+                      '기업회원',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: isIndividualSelected
+                            ? const Color(0xFFCBCBCB)
+                            : tnsMainPink,
+                        fontSize: 18,
+                        fontFamily: 'Pretendard',
+                        fontWeight: isIndividualSelected
+                            ? FontWeight.w400
+                            : FontWeight.w700,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
             Positioned(
