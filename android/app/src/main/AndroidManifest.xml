@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.nextstar.app">
     <application
-        android:label="nextstar_app"
+        android:label="The Next Star"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
