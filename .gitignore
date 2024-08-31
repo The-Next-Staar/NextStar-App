@@ -46,3 +46,5 @@ app.*.map.json
 .env
 
 android/app/build.gradle
+
+assets/images/trainees/

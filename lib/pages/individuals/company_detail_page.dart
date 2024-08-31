@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../models/casting.dart';
 import '../../models/company.dart';
 import 'individuals_apply/apply_page_1.dart';
 
 class CompanyDetailPage extends StatefulWidget {
   final Company company;
 
-  CompanyDetailPage({required this.company});
+  const CompanyDetailPage({super.key, required this.company});
 
   @override
   _CompanyDetailPageState createState() => _CompanyDetailPageState();
@@ -56,13 +55,6 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: const BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            offset: Offset(0, 2),
-            blurRadius: 4,
-          ),
-        ],
       ),
       child: Align(
         alignment: Alignment.bottomCenter,
@@ -363,31 +355,6 @@ class _CompanyDetailPageState extends State<CompanyDetailPage> {
       child: Text(
         label,
         style: TextStyle(color: textColor, fontSize: 12),
-      ),
-    );
-  }
-
-  Widget _buildCastingCard(Casting casting) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(casting.message,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 5),
-          Text('마감일: ${casting.daysUntilDeadline}',
-              style: const TextStyle(fontSize: 14, color: Colors.grey)),
-          const SizedBox(height: 5),
-          Text('담당자: ${casting.contactPerson}',
-              style: const TextStyle(fontSize: 14)),
-        ],
       ),
     );
   }

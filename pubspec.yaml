@@ -70,6 +70,12 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/images/details/
+    - assets/images/trainees/choi_yuna/
+    - assets/images/trainees/jessica/
+    - assets/images/trainees/jung_minsoo/
+    - assets/images/trainees/kim_areum/
+    - assets/images/trainees/lee_junho/
+    - assets/images/trainees/sara/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -100,6 +106,6 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/icons/the_next_star_logo.ico"
+  image_path: "assets/images/app_icon.png"
   adaptive_icon_background: "#ffffff"
   adaptive_icon_foreground: "assets/images/the_next_star_logo.png"
