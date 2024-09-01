@@ -300,7 +300,7 @@ class _SearchFormResults extends StatelessWidget {
             left: 0,
             top: 41,
             child: Container(
-              width: 350,
+              width: double.infinity,
               height: 50,
               decoration: ShapeDecoration(
                 color: Colors.white,
