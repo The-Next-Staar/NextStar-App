@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'Individuals_registration_page_2.dart';
+import 'individuals_registration_page_2.dart';
 
 class IndividualsRegistrationPage1 extends StatefulWidget {
   @override
