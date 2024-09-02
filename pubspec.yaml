@@ -70,18 +70,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/images/details/
-    - assets/images/trainees/choi_yuna/
-    - assets/images/trainees/jessica/
-    - assets/images/trainees/jung_minsoo/
-    - assets/images/trainees/kim_areum/
-    - assets/images/trainees/lee_junho/
-    - assets/images/trainees/sara/
-    - assets/images/trainees/hanni_pahm/
-    - assets/images/trainees/chaeyoung/
-    - assets/images/trainees/hyunji/
-    - assets/images/trainees/jisung/
-    - assets/images/trainees/chul/
-    - assets/images/trainees/jungmin/
+    - assets/images/trainees/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
