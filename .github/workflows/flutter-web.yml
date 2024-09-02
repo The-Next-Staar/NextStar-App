@@ -13,11 +13,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Verify assets directory
-      run: |
-        echo "Contents of assets directory:"
-        ls -R assets
-
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
