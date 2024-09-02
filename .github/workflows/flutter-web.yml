@@ -17,16 +17,12 @@ jobs:
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.24.1'
-        working-directory: ./NextStar-App
 
     - name: Install Dependencies
       run: flutter pub get
-      working-directory: ./NextStar-App
 
     - name: Build Flutter Web
       run: flutter build web --release
-      working-directory: ./NextStar-App  # Add this line
-
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
