@@ -45,7 +45,8 @@ class _MessagePageState extends State<MessagePage> {
     return Scaffold(
       body: Column(
         children: [
-          _buildAppBar(context),
+          _buildAppBar(),
+          _buildContactInfo(),
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
@@ -61,36 +62,69 @@ class _MessagePageState extends State<MessagePage> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
+  Widget _buildAppBar() {
     return Container(
       width: double.infinity,
       height: 80,
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Align(
-        alignment: Alignment.bottomCenter,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back, color: Color(0xFF434343)),
+              icon: const Icon(Icons.arrow_back, color: Color(0xFF171719)),
               onPressed: () => Navigator.pop(context),
             ),
-            Expanded(
-              child: Text(
-                widget.casting.company.company,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Color(0xFF434343),
-                  fontSize: 16,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+            Image.asset(
+              'assets/images/the_next_star_logo_line.png',
+              width: 150,
+              fit: BoxFit.contain,
             ),
-            const SizedBox(width: 48),
+            const SizedBox(width: 32),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildContactInfo() {
+    return Container(
+      width: double.infinity,
+      height: 50,
+      color: const Color(0xFFF9F9F9),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            widget.casting.company.company,
+            style: const TextStyle(
+              color: Color(0xFF434343),
+              fontSize: 16,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF2F8),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFF6DAE5)),
+            ),
+            child: const Text(
+              '인증된 기업',
+              style: TextStyle(
+                color: Color(0xFFFF7AB6),
+                fontSize: 11,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
