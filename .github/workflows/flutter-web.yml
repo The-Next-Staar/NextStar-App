@@ -13,23 +13,25 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
+    - name: Verify assets directory
+      run: |
+        echo "Contents of assets directory:"
+        ls -R assets
+
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.24.1'
-        working-directory: ./NextStar-App
 
     - name: Install Dependencies
       run: flutter pub get
-      working-directory: ./NextStar-App
 
     - name: Build Flutter Web
       run: flutter build web --release
-      working-directory: ./NextStar-App  # Add this line
-
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GH_PAGES_TOKEN }}
-        publish_dir: build/web
+        publish_dir: NextStar-App/build/web
+
